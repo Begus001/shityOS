@@ -1,5 +1,2 @@
-gdbconf
-.vscode/
 x86/kernel.elf
 x86/o/*
-

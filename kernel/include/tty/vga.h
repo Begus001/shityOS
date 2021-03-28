@@ -30,12 +30,12 @@ static inline uint8_t vga_get_color(enum vga_color fg, enum vga_color bg)
 
 static inline uint16_t vga_entry(unsigned char c, uint8_t color)
 {
-	return (uint16_t)c | (uint16_t)(color << 8);
+	return (uint16_t) c | (uint16_t)(color << 8);
 }
 
 static inline uint16_t vga_clear_char(uint8_t color)
 {
-	return vga_entry((char)0, color);
+	return vga_entry((char) 0, color);
 }
 
 #endif

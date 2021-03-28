@@ -1,6 +1,6 @@
-MB_MAGIC equ 0x1BADB002
-MB_FLAGS equ 0x0
-MB_CHKSM equ -(MB_MAGIC + MB_FLAGS)
+MB_MAGIC: equ 0x1BADB002
+MB_FLAGS: equ 0x0
+MB_CHKSM: equ -(MB_MAGIC + MB_FLAGS)
 
 section .multiboot
 

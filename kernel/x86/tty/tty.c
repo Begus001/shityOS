@@ -3,7 +3,7 @@
 #include <tty/tty.h>
 #include <tty/vga.h>
 
-static uint16_t *vidmem = (uint16_t *)0xB8000;
+static uint16_t *vidmem = (uint16_t *) 0xB8000;
 
 static size_t MAX_COLS = 80, MAX_ROWS = 25;
 
@@ -46,12 +46,12 @@ void tty_putc(char c)
 {
 	switch (c)
 	{
-	case '\n':
-	{
-		col = 0;
-		goto inc_row;
-	}
-	break;
+		case '\n':
+		{
+			col = 0;
+			goto inc_row;
+		}
+			break;
 	}
 
 	const size_t index = row * MAX_COLS + col;
@@ -59,7 +59,7 @@ void tty_putc(char c)
 
 	if (++col >= MAX_COLS)
 	{
-	inc_row:
+		inc_row:
 		col = 0;
 		if (++row >= MAX_ROWS)
 		{
@@ -88,7 +88,7 @@ int tty_putn(size_t n, unsigned char base)
 
 	*p = '\0';
 
-	while(n)
+	while (n)
 	{
 		if (--p < buf)
 			return 1;
@@ -98,7 +98,7 @@ int tty_putn(size_t n, unsigned char base)
 	}
 
 	tty_puts(p);
-	
+
 	return 0;
 }
 
@@ -111,12 +111,12 @@ void kprintf(const char *fmt, ...)
 
 	va_start(va, fmt);
 
-	while(*fmt)
+	while (*fmt)
 	{
 		if (*fmt == '%')
 		{
 			fmt++;
-			switch(*fmt)
+			switch (*fmt)
 			{
 				case 'd':
 				case 'i':
@@ -125,7 +125,7 @@ void kprintf(const char *fmt, ...)
 					n = va_arg(va, unsigned long int);
 					tty_putn(n, 10);
 				}
-				break;
+					break;
 
 				case 'x':
 				{
@@ -133,7 +133,7 @@ void kprintf(const char *fmt, ...)
 					tty_puts("0x");
 					tty_putn(n, 16);
 				}
-				break;
+					break;
 
 				case 'b':
 				{
@@ -141,7 +141,7 @@ void kprintf(const char *fmt, ...)
 					tty_puts("0b");
 					tty_putn(n, 2);
 				}
-				break;
+					break;
 
 				case 'o':
 				{
@@ -149,37 +149,36 @@ void kprintf(const char *fmt, ...)
 					tty_puts("0o");
 					tty_putn(n, 8);
 				}
-				break;
+					break;
 
 				case 's':
 				{
 					s = va_arg(va, char *);
 					tty_puts(s);
 				}
-				break;
+					break;
 
 				case 'c':
 				{
 					n = va_arg(va, int);
 					tty_putc(n);
 				}
-				break;
+					break;
 
 				case '%':
 				{
 					tty_putc('%');
 				}
-				break;
+					break;
 
 				default:
 				{
 					tty_putc('%');
 					tty_putc(*fmt);
 				}
-				break;
+					break;
 			}
-		}
-		else
+		} else
 		{
 			tty_putc(*fmt);
 		}
