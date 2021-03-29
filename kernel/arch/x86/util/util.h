@@ -3,7 +3,7 @@
 
 #include <def/int.h>
 
-void outb(u16 addr, u8 data);
-u8 inb(u16 addr);
+void out8(u16 addr, u8 data);
+u8 in8(u16 addr);
 
 #endif

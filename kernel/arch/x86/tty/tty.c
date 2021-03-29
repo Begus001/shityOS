@@ -1,9 +1,9 @@
 #include <def/int.h>
-#include <string.h>
+#include <string/string.h>
 #include <debug/serial.h>
 
 #include <tty/tty.h>
-#include <tty/vga.h>
+#include <vga.h>
 
 static u16 *vidmem = (u16 *) 0xB8000;
 

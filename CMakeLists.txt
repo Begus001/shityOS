@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16.3)
 
 set(CMAKE_ASM_NASM_OBJECT_FORMAT elf)
 set(CMAKE_C_COMPILER_WORKS TRUE)
-set(CMAKE_C_COMPILER $ENV{HOME}/os/gcc-cross-i686/bin/i686-elf-gcc)
+set(CMAKE_C_COMPILER "$ENV{HOME}/os/gcc-cross-i686/bin/i686-elf-gcc")
 
 set(CMAKE_BUILD_TYPE Debug)
 
@@ -12,48 +12,69 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 
 set(ARCH x86)
 
-set(BIN_NAME kernel.elf)
+set(KERNEL_ELF kernel.elf)
 
-file(GLOB LINKERSCRIPT ${CMAKE_SOURCE_DIR}/kernel/kernel.ld)
+if (${ARCH} MATCHES x86)
+
+	message(STATUS "Generating x86 files")
+	set(KERNEL_LINKER "${CMAKE_SOURCE_DIR}/kernel/arch/x86/kernel.ld")
+
+endif ()
 
 set(C_FLAGS -ffreestanding -O0 -Wall -Wextra -nostdlib)
-set(LD_FLAGS -T ${LINKERSCRIPT} -ffreestanding -O0 -nostdlib)
+set(LD_FLAGS -T${KERNEL_LINKER} -ffreestanding -O0 -nostdlib)
 
-add_executable(${BIN_NAME}
-        kernel/arch/x86/boot/boot.asm
-        kernel/init.c
-        kernel/tty.c
-        kernel/include/tty/tty.h
-        kernel/include/tty/vga.h
-        kernel/string.c
-        kernel/include/string.h
-        kernel/util.c
-        kernel/include/util.h
-        kernel/debug/serial.c
-        kernel/include/debug/serial.h
-        )
+add_executable(${KERNEL_ELF}
+		kernel/init.c
+		kernel/include/tty/tty.h
+		kernel/string.c
+		kernel/include/string/string.h
+		kernel/include/debug/serial.h
+		kernel/include/def/int.h
+		)
 
-target_compile_options(${BIN_NAME} PRIVATE
-        $<$<COMPILE_LANGUAGE:C>:${C_FLAGS}>
-        )
+target_compile_options(${KERNEL_ELF} PRIVATE
+		$<$<COMPILE_LANGUAGE:C>:${C_FLAGS}>
+		)
 
-target_link_options(${BIN_NAME} PRIVATE
-        ${LD_FLAGS})
+target_link_options(${KERNEL_ELF} PRIVATE
+		${LD_FLAGS}
+		)
 
-target_include_directories(${BIN_NAME} PRIVATE
-        kernel/include
-        )
+target_include_directories(${KERNEL_ELF} PRIVATE
+		kernel/include
+		)
+
+if (${ARCH} MATCHES x86)
+
+	target_sources(${KERNEL_ELF} PRIVATE
+			kernel/arch/x86/boot/boot.asm
+			kernel/arch/x86/debug/serial.c
+			kernel/arch/x86/descriptor_tables/gdt.c
+			kernel/arch/x86/tty/tty.c
+			kernel/arch/x86/util/util.c
+			)
+
+	target_include_directories(${KERNEL_ELF} PRIVATE
+			kernel/arch/x86/boot
+			kernel/arch/x86/debug
+			kernel/arch/x86/descriptor_tables
+			kernel/arch/x86/tty
+			kernel/arch/x86/util
+			)
+
+endif ()
 
 add_custom_target(run
-        DEPENDS ${BIN_NAME}
-        COMMENT "Running kernel..."
-        COMMAND qemu-system-i386 -kernel ${BIN_NAME}
-        USES_TERMINAL
-        )
+		DEPENDS ${KERNEL_ELF}
+		COMMENT "Running kernel..."
+		COMMAND qemu-system-i386 -kernel ${KERNEL_ELF}
+		USES_TERMINAL
+		)
 
 add_custom_target(debug
-        DEPENDS ${BIN_NAME}
-        COMMENT "Running kernel in debug mode..."
-        COMMAND qemu-system-i386 -kernel ${BIN_NAME} -s -S
-        USES_TERMINAL
-        )
+		DEPENDS ${KERNEL_ELF}
+		COMMENT "Running kernel in debug mode..."
+		COMMAND qemu-system-i386 -kernel ${KERNEL_ELF} -s -S
+		USES_TERMINAL
+		)

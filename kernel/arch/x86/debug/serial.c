@@ -3,16 +3,18 @@
 #include <debug/serial.h>
 #include <tty/tty.h>
 
+#define COM 0x3F8
+
 static void dbgputc(char c)
 {
 	if(c == '\n')
 	{
-		outb(COM, '\r');
-		outb(COM, '\n');
+		out8(COM, '\r');
+		out8(COM, '\n');
 		return;
 	}
-
-	outb(COM, c);
+	
+	out8(COM, c);
 }
 
 static size_t dbgputs(const char *s)
