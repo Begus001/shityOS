@@ -1,9 +1,9 @@
 #ifndef KERNEL_UTIL_H
 #define KERNEL_UTIL_H
 
-#include <stdint.h>
+#include <def/int.h>
 
-void outb(uint16_t addr, uint8_t data);
-uint8_t inb(uint16_t addr);
+void outb(u16 addr, u8 data);
+u8 inb(u16 addr);
 
 #endif

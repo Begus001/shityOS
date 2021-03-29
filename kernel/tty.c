@@ -1,16 +1,16 @@
-#include <stdint-gcc.h>
+#include <def/int.h>
 #include <string.h>
 #include <debug/serial.h>
 
 #include <tty/tty.h>
 #include <tty/vga.h>
 
-static uint16_t *vidmem = (uint16_t *) 0xB8000;
+static u16 *vidmem = (u16 *) 0xB8000;
 
 static size_t MAX_COLS = 80, MAX_ROWS = 25;
 
 static size_t col, row;
-static uint8_t color;
+static u8 color;
 
 void tty_init(void)
 {

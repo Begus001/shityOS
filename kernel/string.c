@@ -2,8 +2,8 @@
 
 void *memcpy(void *dest, const void *src, size_t n)
 {
-	uint8_t *d = (uint8_t *) dest;
-	const uint8_t *s = (uint8_t *) src;
+	u8 *d = (u8 *) dest;
+	const u8 *s = (u8 *) src;
 
 	while (n--)
 		*d++ = *s++;
@@ -11,9 +11,9 @@ void *memcpy(void *dest, const void *src, size_t n)
 	return dest;
 }
 
-void *memset(void *dest, uint8_t c, size_t n)
+void *memset(void *dest, u8 c, size_t n)
 {
-	uint8_t *d = (uint8_t *) dest;
+	u8 *d = (u8 *) dest;
 
 	while (n--)
 		*d++ = c;

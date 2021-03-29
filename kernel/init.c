@@ -1,5 +1,4 @@
-#include <stdint-gcc.h>
-
+#include <def/int.h>
 #include <tty/tty.h>
 #include <string.h>
 #include <debug/serial.h>
