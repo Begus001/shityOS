@@ -1,5 +1,6 @@
 #include <stdint-gcc.h>
 #include <string.h>
+#include <debug/serial.h>
 
 #include <tty/tty.h>
 #include <tty/vga.h>
@@ -15,6 +16,8 @@ void tty_init(void)
 {
 	color = vga_get_color(VGA_COLOR_WHITE, VGA_COLOR_BLACK);
 	tty_clear();
+
+	dbgprintf("Terminal initialized:\nColor: %x\n", color);
 }
 
 void tty_clear(void)
@@ -24,6 +27,8 @@ void tty_clear(void)
 		vidmem[i] = vga_clear_char(color);
 	}
 	col = row = 0;
+
+	dbgprintf("Terminal cleared\n");
 }
 
 void tty_scroll_down(void)
@@ -41,6 +46,8 @@ void tty_scroll_down(void)
 	}
 
 	col = 0;
+
+	dbgprintf("Terminal scrolled down\n");
 }
 
 static void putc(char c)

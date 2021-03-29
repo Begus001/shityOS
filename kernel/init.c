@@ -7,7 +7,6 @@
 void init(void)
 {
 	tty_init();
-	char buf[10] = {'X', 'X', 'X', 'X', 'X', '\0', 'X', 'X', 'X', 'X'};
-	kprintf(strcat(buf, "lole"));
-	kprintf("\n\ndone?");
+	kprintf("Welcome to shityOS, the shittiest OS in the World!\n");
+	dbgprintf("Welcome to shityOS, the shittiest OS in the World!\n");
 }
