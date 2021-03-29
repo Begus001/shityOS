@@ -93,10 +93,10 @@ static size_t sputn(char *buf, size_t n, unsigned char base)
 		return 0;
 
 	const char *digit_buf = "0123456789ABCDEF";
-	char strbuf[PUTN_BUF_SIZE] = "";
+	char strbuf[PUTN_BUF_MAX] = "";
 	char *p;
 
-	p = buf + PUTN_BUF_SIZE - 1;
+	p = buf + PUTN_BUF_MAX - 1;
 
 	*p = '\0';
 
@@ -120,7 +120,7 @@ size_t kvsprintf(char *buf, const char *fmt, va_list va)
 		return 0;
 
 	const char *s;
-	char putn_buf[PUTN_BUF_SIZE] = "";
+	char putn_buf[PUTN_BUF_MAX] = "";
 	size_t n;
 
 	size_t char_count = 0;
@@ -169,7 +169,7 @@ size_t kvsprintf(char *buf, const char *fmt, va_list va)
 				case 'o':
 				{
 					n = va_arg(va, unsigned long int);
-					strcat(buf, "0o");
+					strcat(buf, "0");
 					char_count += 2;
 					char_count += sputn(putn_buf, n, 8);
 					strcat(buf, putn_buf);

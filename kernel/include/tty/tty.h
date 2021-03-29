@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdarg.h>
 
-#define PUTN_BUF_SIZE 256
+#define PUTN_BUF_MAX 256
 #define PUTN_MAX 0xFFFFFFFF
 #define KPF_MAX 1024
 

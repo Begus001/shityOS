@@ -47,10 +47,8 @@ char *strcat(char *dest, const char *src)
 	while (n--)
 	{
 		*p++ = *src++;
-		int test = 0;
 	}
 
 	*p = '\0';
-	int test = 0;
 	return dest;
 }
