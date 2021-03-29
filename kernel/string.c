@@ -2,8 +2,8 @@
 
 void *memcpy(void *dest, const void *src, size_t n)
 {
-	uint8_t *d = (uint8_t *)dest;
-	const uint8_t *s = (uint8_t *)src;
+	uint8_t *d = (uint8_t *) dest;
+	const uint8_t *s = (uint8_t *) src;
 
 	while (n--)
 		*d++ = *s++;
@@ -13,12 +13,12 @@ void *memcpy(void *dest, const void *src, size_t n)
 
 void *memset(void *dest, uint8_t c, size_t n)
 {
-	uint8_t *d = (uint8_t *)dest;
+	uint8_t *d = (uint8_t *) dest;
 
 	while (n--)
 		*d++ = c;
 
-	return (void *)dest;
+	return (void *) dest;
 }
 
 size_t strlen(const char *str)
@@ -36,7 +36,7 @@ size_t strlen(const char *str)
 
 char *strcpy(char *dest, const char *src)
 {
-	return (char *)memcpy(dest, src, strlen(src));
+	return (char *) memcpy(dest, src, strlen(src) + 1);
 }
 
 char *strcat(char *dest, const char *src)
@@ -45,7 +45,12 @@ char *strcat(char *dest, const char *src)
 	char *p = dest + strlen(dest);
 
 	while (n--)
+	{
 		*p++ = *src++;
+		int test = 0;
+	}
 
+	*p = '\0';
+	int test = 0;
 	return dest;
 }

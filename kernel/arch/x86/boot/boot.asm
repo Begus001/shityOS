@@ -16,8 +16,8 @@ global _start
 _start:
 	mov esp, kernel_stack_top
 
-	extern kernel_init
-	call kernel_init
+	extern init
+	call init
 
 	cli
 loop:
