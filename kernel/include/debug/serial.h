@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdarg.h>
 
-#define COM1 0x3F8
+#define COM 0x3F8
 
 size_t dbgprintf(const char *fmt, ...);
 

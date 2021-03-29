@@ -7,12 +7,12 @@ static void dbgputc(char c)
 {
 	if(c == '\n')
 	{
-		outb(COM1, '\r');
-		outb(COM1, '\n');
+		outb(COM, '\r');
+		outb(COM, '\n');
 		return;
 	}
 
-	outb(COM1, c);
+	outb(COM, c);
 }
 
 static size_t dbgputs(const char *s)
