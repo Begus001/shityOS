@@ -21,8 +21,8 @@ if (${ARCH} MATCHES x86)
 
 endif ()
 
-set(C_FLAGS -ffreestanding -O0 -Wall -Wextra -nostdlib)
-set(LD_FLAGS -T${KERNEL_LINKER} -ffreestanding -O0 -nostdlib)
+set(KERNEL_C_FLAGS -ffreestanding -O0 -Wall -Wextra -nostdlib -masm=intel)
+set(KERNEL_LD_FLAGS -T${KERNEL_LINKER} -ffreestanding -O0 -nostdlib)
 
 add_executable(${KERNEL_ELF}
 		kernel/init.c
@@ -34,11 +34,11 @@ add_executable(${KERNEL_ELF}
 		)
 
 target_compile_options(${KERNEL_ELF} PRIVATE
-		$<$<COMPILE_LANGUAGE:C>:${C_FLAGS}>
+		$<$<COMPILE_LANGUAGE:C>:${KERNEL_C_FLAGS}>
 		)
 
 target_link_options(${KERNEL_ELF} PRIVATE
-		${LD_FLAGS}
+		${KERNEL_LD_FLAGS}
 		)
 
 target_include_directories(${KERNEL_ELF} PRIVATE

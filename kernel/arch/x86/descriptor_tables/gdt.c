@@ -64,12 +64,13 @@ static void gdt_load()
 	
 	asm volatile("lgdt %0" : : "m"(p));
 	asm volatile(
-	"mov $0x10, %ax;"
-	"mov %ax, %ds;"
-	"mov %ax, %es;"
-	"mov %ax, %ds;"
-	"mov %ax, %ss;"
-	"ljmp $0x8, $flush;"
+	"mov ax, 0x10;"
+	"mov ds, ax;"
+	"mov es, ax;"
+	"mov fs, ax;"
+	"mov gs, ax;"
+	"mov ss, ax;"
+	"jmp 0x8:flush;"
 	"flush:"
 	);
 	

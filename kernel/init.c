@@ -9,6 +9,6 @@ void init(void)
 	tty_init();
 	gdt_init();
 	
-	kprintf("Welcome to shityOS, the shittiest OS in the World!\n");
-	dbgprintf("Welcome to shityOS, the shittiest OS in the World!\n");
+	kprintf("Welcome to shityOS, the shittiest OS in the world!\n");
+	dbgprintf("Welcome to shityOS, the shittiest OS in the world!\n");
 }
