@@ -1,8 +1,8 @@
-#include <def/int.h>
-#include <debug/serial.h>
+#include <sys/int.h>
+#include <tty/serial.h>
 #include <stdbool.h>
 
-#include <gdt.h>
+#include <descriptor_tables/gdt.h>
 
 #define GDT_TYPE_READ_WRITE 0x2     //  code segment: read, data segment: write
 #define GDT_TYPE_DIRECTION 0x4      /*  code segment: 1: can be executed by lower dpl, 0: can only
@@ -14,8 +14,7 @@
 
 #define GDT_MAX 5
 
-struct gdt_entry
-{
+struct gdt_entry {
 	u16 limit_lo;
 	u16 base_lo;
 	u8 base_hi;
@@ -31,8 +30,7 @@ struct gdt_entry
 	u8 base_hi2;
 } __attribute__((packed));
 
-struct gdt_pointer
-{
+struct gdt_pointer {
 	u16 size;
 	u32 offset;
 } __attribute__((packed));

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16.3)
 
 set(CMAKE_ASM_NASM_OBJECT_FORMAT elf)
 set(CMAKE_C_COMPILER_WORKS TRUE)
-set(CMAKE_C_COMPILER "$ENV{HOME}/os/gcc-cross-i686/bin/i686-elf-gcc")
+#set(CMAKE_C_COMPILER "$ENV{HOME}/os/gcc-cross-i686/bin/i686-elf-gcc")
 
 set(CMAKE_BUILD_TYPE Debug)
 
@@ -28,9 +28,9 @@ add_executable(${KERNEL_ELF}
 		kernel/init.c
 		kernel/include/tty/tty.h
 		kernel/string.c
-		kernel/include/string/string.h
-		kernel/include/debug/serial.h
-		kernel/include/def/int.h
+		kernel/include/sys/string.h
+		kernel/include/tty/serial.h
+		kernel/include/sys/int.h
 		)
 
 target_compile_options(${KERNEL_ELF} PRIVATE
@@ -49,18 +49,15 @@ if (${ARCH} MATCHES x86)
 
 	target_sources(${KERNEL_ELF} PRIVATE
 			kernel/arch/x86/boot/boot.asm
-			kernel/arch/x86/debug/serial.c
+			kernel/arch/x86/tty/serial.c
 			kernel/arch/x86/descriptor_tables/gdt.c
 			kernel/arch/x86/tty/tty.c
-			kernel/arch/x86/util/util.c
+			kernel/arch/x86/sys/util.c
+			kernel/arch/x86/descriptor_tables/idt.c
 			)
 
 	target_include_directories(${KERNEL_ELF} PRIVATE
-			kernel/arch/x86/boot
-			kernel/arch/x86/debug
-			kernel/arch/x86/descriptor_tables
-			kernel/arch/x86/tty
-			kernel/arch/x86/util
+			kernel/arch/x86
 			)
 
 endif ()

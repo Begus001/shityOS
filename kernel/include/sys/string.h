@@ -1,7 +1,7 @@
 #ifndef KERNEL_STRING_H
 #define KERNEL_STRING_H
 
-#include <def/int.h>
+#include <sys/int.h>
 #include <stddef.h>
 
 void *memcpy(void *dest, const void *src, size_t n);

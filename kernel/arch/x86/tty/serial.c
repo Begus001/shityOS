@@ -1,6 +1,4 @@
-#include <util.h>
-
-#include <debug/serial.h>
+#include <tty/serial.h>
 #include <tty/tty.h>
 
 #define COM 0x3F8

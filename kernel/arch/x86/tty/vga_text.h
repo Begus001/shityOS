@@ -1,7 +1,7 @@
-#ifndef KERNEL_VGA_H
-#define KERNEL_VGA_H
+#ifndef KERNEL_VGA_TEXT_H
+#define KERNEL_VGA_TEXT_H
 
-#include <def/int.h>
+#include <sys/int.h>
 
 enum vga_color
 {

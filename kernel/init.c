@@ -1,8 +1,8 @@
-#include <def/int.h>
+#include <sys/int.h>
+#include <sys/string.h>
 #include <tty/tty.h>
-#include <string/string.h>
-#include <debug/serial.h>
-#include <gdt.h>
+#include <tty/serial.h>
+#include <descriptor_tables/gdt.h>
 
 void init(void)
 {

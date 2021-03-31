@@ -1,5 +1,5 @@
 
-#include <util.h>
+#include <sys/util.h>
 
 void out8(u16 addr, u8 data)
 {
