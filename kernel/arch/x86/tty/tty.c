@@ -100,6 +100,11 @@ static size_t sputn(char *buf, size_t n, unsigned char base)
 		n /= base;
 	}
 	
+	if (strlen(p) == 0) {
+		p--;
+		*p = '0';
+	}
+	
 	strcpy(buf, p);
 	
 	return strlen(p);
