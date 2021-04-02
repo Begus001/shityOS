@@ -4,6 +4,8 @@
 #include <tty/tty.h>
 #include <tty/serial.h>
 #include <gdt/gdt.h>
+#include <intr/task.h>
+#include <intr/pit.h>
 
 #include <intr/intr.h>
 
@@ -75,6 +77,23 @@ static void set_entry(u8 i, void (*offset)(), u16 cs_selector, u8 gate_type, boo
 	idt[i].offset_hi = (handler >> 16) & 0xFFFF;
 }
 
+static int count = 0;
+
+context_t *intr_com_handle(context_t *cntxt)
+{
+	dbgprintf("Interrupt ocurred\n");
+	
+	context_t *next_cntxt = cntxt;
+	
+	if (cntxt->intr == 32) {
+		dbgprintf("Clock interrupt\n");
+		kprintf("%d ", count);
+		count++;
+	}
+	
+	return next_cntxt;
+}
+
 static void populate(void)
 {
 	set_entry(0, intr_com_0, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
@@ -97,7 +116,7 @@ static void populate(void)
 	set_entry(17, intr_com_17, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
 	set_entry(18, intr_com_18, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
 	
-	set_entry(32, lel, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
+	set_entry(32, intr_com_32, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
 	set_entry(33, intr_com_33, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
 	
 	set_entry(48, intr_com_48, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
@@ -115,6 +134,9 @@ static void idt_load(void)
 void intr_init(void)
 {
 	pic_init();
+	pit_init();
+	pit_load_hz(20);
+	
 	populate();
 	idt_load();
 }

@@ -3,10 +3,10 @@
 
 #include <sys/util.h>
 
-#define PIC_CMD_ADDR        0x20
-#define PIC_DAT_ADDR        0x21
-#define PIC_SL_CMD_ADDR     0xA0
-#define PIC_SL_DAT_ADDR     0xA1
+#define PIC_CMD_ADDR    0x20
+#define PIC_DAT_ADDR    0x21
+#define PIC_SL_CMD_ADDR 0xA0
+#define PIC_SL_DAT_ADDR 0xA1
 
 #define PIC_EOI 0x20
 

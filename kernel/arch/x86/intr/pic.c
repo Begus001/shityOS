@@ -14,11 +14,11 @@
 #define ICW3_MASTER_IRQ 0x02  // IRQ, where specific slave is connected to master (send to slaves)
 #define ICW3_SLAVE_MASK 0x04  // IRQ, where slaves are connected to master (send to master)
 
-#define ICW4_NO_MICRO_MODE  0x01  // Sets PIC to µProcessor mode if zero (!)
-#define ICW4_AUTO_EOI       0x02  // Automatic end of interrupt
-#define ICW4_SET_MASTER     0x04  // Is master or slave?
-#define ICW4_BUF_MODE       0x08  // Sends signal to enable buffers when outputting to bus
-#define ICW4_NESTED_MODE    0x10  /*    Service requests from slaves whose interrupt requests are being
+#define ICW4_NO_MICRO_MODE 0x01  // Sets PIC to µProcessor mode if zero (!)
+#define ICW4_AUTO_EOI      0x02  // Automatic end of interrupt
+#define ICW4_SET_MASTER    0x04  // Is master or slave?
+#define ICW4_BUF_MODE      0x08  // Sends signal to enable buffers when outputting to bus
+#define ICW4_NESTED_MODE   0x10  /*    Service requests from slaves whose interrupt requests are being
 										serviced at the moment */
 										
 void pic_init(void)
