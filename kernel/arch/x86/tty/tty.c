@@ -3,7 +3,8 @@
 
 #include <tty/serial.h>
 #include <tty/tty.h>
-#include <tty/vga_text.h>
+
+#include "vga_text.h"
 
 static u16 *vidmem = (u16 *) 0xB8000;
 

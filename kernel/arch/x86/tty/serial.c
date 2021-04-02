@@ -1,5 +1,6 @@
 #include <tty/serial.h>
 #include <tty/tty.h>
+#include <sys/util.h>
 
 #define COM 0x3F8
 

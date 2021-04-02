@@ -8,9 +8,10 @@ set(CMAKE_BUILD_TYPE Debug)
 
 project(kernel LANGUAGES C ASM_NASM)
 
-set(CMAKE_VERBOSE_MAKEFILE ON)
-
 set(ARCH x86)
+add_compile_definitions(${ARCH})
+
+set(CMAKE_VERBOSE_MAKEFILE ON)
 
 set(KERNEL_ELF kernel.elf)
 
@@ -21,8 +22,8 @@ if (${ARCH} MATCHES x86)
 
 endif ()
 
-set(KERNEL_C_FLAGS -ffreestanding -O0 -Wall -Wextra -nostdlib -masm=intel)
-set(KERNEL_LD_FLAGS -T${KERNEL_LINKER} -ffreestanding -O0 -nostdlib)
+set(KERNEL_C_FLAGS -ffreestanding -O0 -Wall -Wextra -nostdlib -masm=intel -std=gnu11 -ggdb)
+set(KERNEL_LD_FLAGS -T${KERNEL_LINKER} -ffreestanding -O0 -nostdlib -ggdb)
 
 add_executable(${KERNEL_ELF}
 		kernel/init.c
@@ -31,6 +32,7 @@ add_executable(${KERNEL_ELF}
 		kernel/include/sys/string.h
 		kernel/include/tty/serial.h
 		kernel/include/sys/int.h
+		kernel/include/intr/intr.h
 		)
 
 target_compile_options(${KERNEL_ELF} PRIVATE
@@ -50,10 +52,11 @@ if (${ARCH} MATCHES x86)
 	target_sources(${KERNEL_ELF} PRIVATE
 			kernel/arch/x86/boot/boot.asm
 			kernel/arch/x86/tty/serial.c
-			kernel/arch/x86/descriptor_tables/gdt.c
+			kernel/arch/x86/gdt/gdt.c
 			kernel/arch/x86/tty/tty.c
-			kernel/arch/x86/sys/util.c
-			kernel/arch/x86/descriptor_tables/idt.c
+			kernel/arch/x86/intr/idt.c
+			kernel/arch/x86/intr/pic.c
+			kernel/arch/x86/intr/intr_stub.asm
 			)
 
 	target_include_directories(${KERNEL_ELF} PRIVATE
@@ -72,6 +75,7 @@ add_custom_target(run
 add_custom_target(debug
 		DEPENDS ${KERNEL_ELF}
 		COMMENT "Running kernel in debug mode..."
+		COMMAND gnome-terminal -- gdb
 		COMMAND qemu-system-i386 -kernel ${KERNEL_ELF} -s -S
 		USES_TERMINAL
 		)
