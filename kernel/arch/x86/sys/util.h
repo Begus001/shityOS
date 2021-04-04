@@ -1,7 +1,7 @@
 #ifndef KERNEL_UTIL_H
 #define KERNEL_UTIL_H
 
-#include <sys/int.h>
+#include <sys/def/int.h>
 
 static inline void out8(u16 addr, u8 data)
 {

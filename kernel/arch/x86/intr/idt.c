@@ -1,4 +1,4 @@
-#include <sys/int.h>
+#include <sys/def/int.h>
 #include <stdbool.h>
 #include <intr/pic.h>
 #include <tty/tty.h>
@@ -40,6 +40,8 @@ extern void intr_com_33(void);
 
 extern void intr_com_48(void);
 
+extern void intr_com_255(void);
+
 
 struct idt_entry {
 	u16 offset_lo;
@@ -77,18 +79,41 @@ static void set_entry(u8 i, void (*offset)(), u16 cs_selector, u8 gate_type, boo
 	idt[i].offset_hi = (handler >> 16) & 0xFFFF;
 }
 
-static int count = 0;
-
 context_t *intr_com_handle(context_t *cntxt)
 {
-	dbgprintf("Interrupt ocurred\n");
+#ifdef DBG_INTR
+	dbgprintf("Interrupt occurred\n");
+#endif
 	
 	context_t *next_cntxt = cntxt;
 	
-	if (cntxt->intr == 32) {
+	if (cntxt->intr <= 0x1F) {
+		
+		tty_set_color_tmp(COLOR_BLACK, COLOR_RED);
+		
+		kprintf("\nException %x (%d): %x\n", cntxt->intr, cntxt->intr, cntxt->err);
+		kprintf("EAX: %x\nEBX: %x\nECX: %x\nEDX: %x\nESI: %x\nEDI: %x\nEBP: %x\nEIP: %x\nEFLAGS: %b\n",
+		        cntxt->eax, cntxt->ebx, cntxt->ecx, cntxt->edx, cntxt->esi, cntxt->edi, cntxt->ebp,
+		        cntxt->eip,
+		        cntxt->eflags);
+		
+		dbgprintf("\nException %x (%d): %x\n", cntxt->intr, cntxt->intr, cntxt->err);
+		dbgprintf("EAX: %x\nEBX: %x\nECX: %x\nEDX: %x\nESI: %x\nEDI: %x\nEBP: %x\nEIP: %x\nEFLAGS: %b\n",
+		          cntxt->eax, cntxt->ebx, cntxt->ecx, cntxt->edx, cntxt->esi, cntxt->edi, cntxt->ebp,
+		          cntxt->eip,
+		          cntxt->eflags);
+		
+		tty_reset_color();
+		
+		kprintf("System halted");
+		dbgprintf("System halted");
+		
+		intr_disable();
+		__asm__ volatile("hlt");
+	} else if (cntxt->intr == 32) {
+#ifdef DBG_INTR
 		dbgprintf("Clock interrupt\n");
-		kprintf("%d ", count);
-		count++;
+#endif
 	}
 	
 	return next_cntxt;
@@ -120,22 +145,25 @@ static void populate(void)
 	set_entry(33, intr_com_33, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
 	
 	set_entry(48, intr_com_48, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
-	
-	
+
+#ifdef DBG_INTR
 	dbgprintf("Interrupt descriptor table created\n");
+#endif
 }
 
 static void idt_load(void)
 {
 	__asm__ volatile("lidt %0" : : "m"(p_idt));
+#ifdef DBG_INTR
 	dbgprintf("Interrupt descriptor table loaded\n");
+#endif
 }
 
 void intr_init(void)
 {
 	pic_init();
 	pit_init();
-	pit_load_hz(20);
+	pit_load_hz(65535);
 	
 	populate();
 	idt_load();
@@ -144,11 +172,15 @@ void intr_init(void)
 void intr_enable(void)
 {
 	__asm__ volatile("sti");
+#ifdef DBG_INTR
 	dbgprintf("Interrupts enabled\n");
+#endif
 }
 
 void intr_disable(void)
 {
 	__asm__ volatile("cli");
+#ifdef DBG_INTR
 	dbgprintf("Interrupts disabled\n");
+#endif
 }

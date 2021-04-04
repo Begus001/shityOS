@@ -9,13 +9,20 @@ set(CMAKE_BUILD_TYPE Debug)
 project(kernel LANGUAGES C ASM_NASM)
 
 set(ARCH x86)
-add_compile_definitions(${ARCH})
+add_compile_definitions(${ARCH})  # Set arch for preprocessor
 
-set(CMAKE_VERBOSE_MAKEFILE ON)
+
+# DEBUG FLAGS #
+
+#add_compile_definitions(DBG_INTR)
+#add_compile_definitions(DBG_TTY)
+
+
+set(CMAKE_VERBOSE_MAKEFILE ON)  # Does not work for ninja
 
 set(KERNEL_ELF kernel.elf)
 
-if (${ARCH} MATCHES x86)
+if (${ARCH} MATCHES x86)  # Select arch linkerscript
 
 	message(STATUS "Generating x86 files")
 	set(KERNEL_LINKER "${CMAKE_SOURCE_DIR}/kernel/arch/x86/kernel.ld")
@@ -31,7 +38,7 @@ add_executable(${KERNEL_ELF}
 		kernel/string.c
 		kernel/include/sys/string.h
 		kernel/include/tty/serial.h
-		kernel/include/sys/int.h
+		kernel/include/sys/def/int.h
 		kernel/include/intr/intr.h
 		)
 
@@ -47,7 +54,7 @@ target_include_directories(${KERNEL_ELF} PRIVATE
 		kernel/include
 		)
 
-if (${ARCH} MATCHES x86)
+if (${ARCH} MATCHES x86)  # Select arch source files
 
 	target_sources(${KERNEL_ELF} PRIVATE
 			kernel/arch/x86/boot/boot.asm
@@ -57,6 +64,7 @@ if (${ARCH} MATCHES x86)
 			kernel/arch/x86/intr/idt.c
 			kernel/arch/x86/intr/pic.c
 			kernel/arch/x86/intr/intr_stub.asm
+			kernel/arch/x86/mm/pmm.c
 			)
 
 	target_include_directories(${KERNEL_ELF} PRIVATE

@@ -1,7 +1,7 @@
 #ifndef KERNEL_TASK_H
 #define KERNEL_TASK_H
 
-#include <sys/int.h>
+#include <sys/def/int.h>
 
 typedef struct {
 	u32 eax;
@@ -21,6 +21,14 @@ typedef struct {
 	u32 esp;
 	u32 ss;
 }  __attribute__((packed)) context_t;
+
+typedef struct task {
+	context_t context;
+	struct task *next;
+	struct task *prev;
+} task_t;
+
+void task_init(void);
 
 context_t *task_switch();
 

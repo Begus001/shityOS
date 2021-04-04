@@ -1,4 +1,4 @@
-#include <sys/int.h>
+#include <sys/def/int.h>
 #include <sys/string.h>
 
 #include <tty/serial.h>
@@ -12,13 +12,14 @@ static size_t MAX_COLS = 80, MAX_ROWS = 25;
 
 static size_t col, row;
 static u8 color;
+static int8 color_buf = -1;
 
 void tty_init(void)
 {
-	color = vga_get_color(VGA_COLOR_WHITE, VGA_COLOR_BLACK);
+	color = vga_get_color(COLOR_WHITE, COLOR_BLACK);
 	tty_clear();
 	
-	dbgprintf("Terminal initialized:\nColor: %x\n", color);
+	dbgprintf("Terminal initialized\nColor: %x\n", color);
 }
 
 void tty_clear(void)
@@ -27,8 +28,10 @@ void tty_clear(void)
 		vidmem[i] = vga_clear_char(color);
 	
 	col = row = 0;
-	
+
+#ifdef DBG_TTY
 	dbgprintf("Terminal cleared\n");
+#endif
 }
 
 void tty_scroll_down(void)
@@ -43,8 +46,28 @@ void tty_scroll_down(void)
 		vidmem[i] = vga_clear_char(color);
 	
 	col = 0;
-	
+#ifdef DBG_INTR
 	dbgprintf("Terminal scrolled down\n");
+#endif
+}
+
+void tty_set_color(enum color fg, enum color bg)
+{
+	color = vga_get_color(fg, bg);
+}
+
+void tty_set_color_tmp(enum color fg, enum color bg)
+{
+	color_buf = color;
+	color = vga_get_color(fg, bg);
+}
+
+void tty_reset_color(void)
+{
+	if (color_buf == -1)
+		return;
+	
+	color = color_buf;
 }
 
 static void putc(char c)

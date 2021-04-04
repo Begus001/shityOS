@@ -48,13 +48,13 @@ intr_com_handler:
 	push ebx
 	push eax
 
-	mov ax, 0x10
+	mov ax, 0x10  ; Switch to kernel data segment
 	mov ds, ax
 	mov es, ax
 
 	push esp
 	call intr_com_handle
-	mov esp, eax
+	mov esp, eax  ; Switch to new stack returned by intr_com_handle
 
 	pop eax
 	pop ebx
@@ -64,6 +64,6 @@ intr_com_handler:
 	pop edi
 	pop ebp
 
-	add esp, 8
+	add esp, 8  ; Remove error code and interrupt number from stack
 
 	iret

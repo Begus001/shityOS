@@ -19,7 +19,7 @@ static void dbgputc(char c)
 static size_t dbgputs(const char *s)
 {
 	size_t char_count;
-	while(*s != '\0')
+ 	while(*s != '\0')
 	{
 		dbgputc(*s++);
 		char_count++;

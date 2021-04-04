@@ -16,6 +16,7 @@ global _start
 _start:
 	mov esp, kernel_stack_top
 
+	push ebx
 	extern init
 	call init
 

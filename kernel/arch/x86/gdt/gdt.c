@@ -1,4 +1,4 @@
-#include <sys/int.h>
+#include <sys/def/int.h>
 #include <tty/serial.h>
 #include <stdbool.h>
 
