@@ -63,6 +63,7 @@ if (${ARCH} MATCHES x86)  # Select arch source files
 			kernel/arch/x86/tty/tty.c
 			kernel/arch/x86/intr/idt.c
 			kernel/arch/x86/intr/pic.c
+			kernel/arch/x86/intr/handler.c
 			kernel/arch/x86/intr/intr_stub.asm
 			kernel/arch/x86/mm/pmm.c
 			)

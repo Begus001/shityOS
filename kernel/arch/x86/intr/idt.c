@@ -15,33 +15,31 @@
 #define IDT_INTR_GATE 0xE
 #define IDT_TRAP_GATE 0xF
 
-extern void intr_com_0(void);
-extern void intr_com_1(void);
-extern void intr_com_2(void);
-extern void intr_com_3(void);
-extern void intr_com_4(void);
-extern void intr_com_5(void);
-extern void intr_com_6(void);
-extern void intr_com_7(void);
-extern void intr_com_8(void);
-extern void intr_com_9(void);
-extern void intr_com_10(void);
-extern void intr_com_11(void);
-extern void intr_com_12(void);
-extern void intr_com_13(void);
-extern void intr_com_14(void);
-extern void intr_com_15(void);
-extern void intr_com_16(void);
-extern void intr_com_17(void);
-extern void intr_com_18(void);
+extern void exc_com_0x0(void);
+extern void exc_com_0x1(void);
+extern void exc_com_0x2(void);
+extern void exc_com_0x3(void);
+extern void exc_com_0x4(void);
+extern void exc_com_0x5(void);
+extern void exc_com_0x6(void);
+extern void exc_com_0x7(void);
+extern void exc_com_0x8(void);
+extern void exc_com_0x9(void);
+extern void exc_com_0xA(void);
+extern void exc_com_0xB(void);
+extern void exc_com_0xC(void);
+extern void exc_com_0xD(void);
+extern void exc_com_0xE(void);
 
-extern void intr_com_32(void);
-extern void intr_com_33(void);
+extern void exc_com_0x10(void);
+extern void exc_com_0x11(void);
+extern void exc_com_0x12(void);
+extern void exc_com_0x13(void);
+extern void exc_com_0x14(void);
 
-extern void intr_com_48(void);
+extern void exc_com_0x1E(void);
 
-extern void intr_com_255(void);
-
+extern void clock_handler(void);
 
 struct idt_entry {
 	u16 offset_lo;
@@ -65,8 +63,9 @@ struct idt_pointer {
 		.offset = idt,
 };
 
-static void set_entry(u8 i, void (*offset)(), u16 cs_selector, u8 gate_type, bool is_storage_segment, u8 dpl,
-                      bool present)
+static void
+set_entry(u8 i, void (*offset)(), u16 cs_selector, u8 gate_type, bool is_storage_segment, u8 dpl,
+          bool present)
 {
 	u32 handler = (u32) offset;
 	idt[i].offset_lo = handler & 0xFFFF;
@@ -79,72 +78,33 @@ static void set_entry(u8 i, void (*offset)(), u16 cs_selector, u8 gate_type, boo
 	idt[i].offset_hi = (handler >> 16) & 0xFFFF;
 }
 
-context_t *intr_com_handle(context_t *cntxt)
-{
-#ifdef DBG_INTR
-	dbgprintf("Interrupt occurred\n");
-#endif
-	
-	context_t *next_cntxt = cntxt;
-	
-	if (cntxt->intr <= 0x1F) {
-		
-		tty_set_color_tmp(COLOR_BLACK, COLOR_RED);
-		
-		kprintf("\nException %x (%d): %x\n", cntxt->intr, cntxt->intr, cntxt->err);
-		kprintf("EAX: %x\nEBX: %x\nECX: %x\nEDX: %x\nESI: %x\nEDI: %x\nEBP: %x\nEIP: %x\nEFLAGS: %b\n",
-		        cntxt->eax, cntxt->ebx, cntxt->ecx, cntxt->edx, cntxt->esi, cntxt->edi, cntxt->ebp,
-		        cntxt->eip,
-		        cntxt->eflags);
-		
-		dbgprintf("\nException %x (%d): %x\n", cntxt->intr, cntxt->intr, cntxt->err);
-		dbgprintf("EAX: %x\nEBX: %x\nECX: %x\nEDX: %x\nESI: %x\nEDI: %x\nEBP: %x\nEIP: %x\nEFLAGS: %b\n",
-		          cntxt->eax, cntxt->ebx, cntxt->ecx, cntxt->edx, cntxt->esi, cntxt->edi, cntxt->ebp,
-		          cntxt->eip,
-		          cntxt->eflags);
-		
-		tty_reset_color();
-		
-		kprintf("System halted");
-		dbgprintf("System halted");
-		
-		intr_disable();
-		__asm__ volatile("hlt");
-	} else if (cntxt->intr == 32) {
-#ifdef DBG_INTR
-		dbgprintf("Clock interrupt\n");
-#endif
-	}
-	
-	return next_cntxt;
-}
-
 static void populate(void)
 {
-	set_entry(0, intr_com_0, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
-	set_entry(1, intr_com_1, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
-	set_entry(2, intr_com_2, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
-	set_entry(3, intr_com_3, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
-	set_entry(4, intr_com_4, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
-	set_entry(5, intr_com_5, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
-	set_entry(6, intr_com_6, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
-	set_entry(7, intr_com_7, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
-	set_entry(8, intr_com_8, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
-	set_entry(9, intr_com_9, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
-	set_entry(10, intr_com_10, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
-	set_entry(11, intr_com_11, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
-	set_entry(12, intr_com_12, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
-	set_entry(13, intr_com_13, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
-	set_entry(14, intr_com_14, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
-	set_entry(15, intr_com_15, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
-	set_entry(16, intr_com_16, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
-	set_entry(17, intr_com_17, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
-	set_entry(18, intr_com_18, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
-	
-	set_entry(32, intr_com_32, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
-	set_entry(33, intr_com_33, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
-	
-	set_entry(48, intr_com_48, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
+	set_entry(0x0, exc_com_0x0, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
+	set_entry(0x1, exc_com_0x1, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
+	set_entry(0x2, exc_com_0x2, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
+	set_entry(0x3, exc_com_0x3, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
+	set_entry(0x4, exc_com_0x4, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
+	set_entry(0x5, exc_com_0x5, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
+	set_entry(0x6, exc_com_0x6, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
+	set_entry(0x7, exc_com_0x7, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
+	set_entry(0x8, exc_com_0x8, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
+	set_entry(0x9, exc_com_0x9, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
+	set_entry(0xA, exc_com_0xA, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
+	set_entry(0xB, exc_com_0xB, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
+	set_entry(0xC, exc_com_0xC, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
+	set_entry(0xD, exc_com_0xD, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
+	set_entry(0xE, exc_com_0xE, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
+
+	set_entry(0x10, exc_com_0x10, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
+	set_entry(0x11, exc_com_0x11, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
+	set_entry(0x12, exc_com_0x12, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
+	set_entry(0x13, exc_com_0x13, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
+	set_entry(0x14, exc_com_0x14, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
+
+	set_entry(0x1E, exc_com_0x1E, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
+
+	set_entry(0x20, clock_handler, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
 
 #ifdef DBG_INTR
 	dbgprintf("Interrupt descriptor table created\n");
@@ -163,8 +123,8 @@ void intr_init(void)
 {
 	pic_init();
 	pit_init();
-	pit_load_hz(65535);
-	
+	pit_load_hz(20);
+
 	populate();
 	idt_load();
 }

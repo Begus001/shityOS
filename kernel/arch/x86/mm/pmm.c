@@ -86,8 +86,8 @@ void pmm_memmap(void)
 	for (size_t i = 0; i < BITMAP_MAX * BITS; i++) {
 		if (test_bit(i) != stretch_used) {
 			stretch_end = i - 1;
-			dbgprintf("Stretch %d: blocks %d to %d %s (%d)\n", stretch_count++, stretch_start, stretch_end,
-			          stretch_used ? "used" : "free", stretch_end - stretch_start + 1);
+			dbgprintf("Stretch %d: blocks %d to %d %s (%d)\n", stretch_count++, stretch_start,
+			          stretch_end, stretch_used ? "used" : "free", stretch_end - stretch_start + 1);
 			stretch_used = !stretch_used;
 			stretch_start = stretch_end + 1;
 		}
@@ -142,6 +142,6 @@ void *pmm_alloc(size_t size)
 
 void pmm_free(void *addr, size_t size)
 {
-		for (size_t i = 0; i < size / (BLOCK_SIZE + 1) + 1; i++)
-			mark_free((void *) (addr + i));
+	for (size_t i = 0; i < size / (BLOCK_SIZE + 1) + 1; i++)
+		mark_free((void *) (addr + i));
 }

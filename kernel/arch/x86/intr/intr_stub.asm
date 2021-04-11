@@ -1,45 +1,44 @@
-%macro intr_com_stub_macro 1
-global intr_com_%1
-intr_com_%1:
+%macro exc_com_stub_macro 1
+global exc_com_%1
+exc_com_%1:
 	push 0
 	push %1
-	jmp intr_com_handler
+	jmp exc_com_handler
 %endmacro
 
-%macro intr_com_err_stub_macro 1
-global intr_com_%1
-intr_com_%1:
+%macro exc_com_err_stub_macro 1
+global exc_com_%1
+exc_com_%1:
 	push %1
-	jmp intr_com_handler
+	jmp exc_com_handler
 %endmacro
 
-intr_com_stub_macro 0
-intr_com_stub_macro 1
-intr_com_stub_macro 2
-intr_com_stub_macro 3
-intr_com_stub_macro 4
-intr_com_stub_macro 5
-intr_com_stub_macro 6
-intr_com_stub_macro 7
-intr_com_err_stub_macro 8
-intr_com_stub_macro 9
-intr_com_err_stub_macro 10
-intr_com_err_stub_macro 11
-intr_com_err_stub_macro 12
-intr_com_err_stub_macro 13
-intr_com_err_stub_macro 14
-intr_com_stub_macro 15
-intr_com_stub_macro 16
-intr_com_err_stub_macro 17
-intr_com_stub_macro 18
+exc_com_stub_macro 0x0
+exc_com_stub_macro 0x1
+exc_com_stub_macro 0x2
+exc_com_stub_macro 0x3
+exc_com_stub_macro 0x4
+exc_com_stub_macro 0x5
+exc_com_stub_macro 0x6
+exc_com_stub_macro 0x7
+exc_com_err_stub_macro 0x8
+exc_com_stub_macro 0x9
+exc_com_err_stub_macro 0xA
+exc_com_err_stub_macro 0xB
+exc_com_err_stub_macro 0xC
+exc_com_err_stub_macro 0xD
+exc_com_err_stub_macro 0xE
 
-intr_com_stub_macro 32
-intr_com_stub_macro 33
+exc_com_stub_macro 0x10
+exc_com_err_stub_macro 0x11
+exc_com_stub_macro 0x12
+exc_com_stub_macro 0x13
+exc_com_stub_macro 0x14
 
-intr_com_stub_macro 48
+exc_com_err_stub_macro 0x1E
 
-extern intr_com_handle
-intr_com_handler:
+extern intr_exc_com_handle
+exc_com_handler:
 	push ebp
 	push edi
 	push esi
@@ -53,17 +52,14 @@ intr_com_handler:
 	mov es, ax
 
 	push esp
-	call intr_com_handle
-	mov esp, eax  ; Switch to new stack returned by intr_com_handle
+	call intr_exc_com_handle
 
-	pop eax
-	pop ebx
-	pop ecx
-	pop edx
-	pop esi
-	pop edi
-	pop ebp
+	cli
+	hlt
+	jmp $
 
-	add esp, 8  ; Remove error code and interrupt number from stack
-
+global clock_handler
+extern intr_clock_handle
+clock_handler:
+	call intr_clock_handle
 	iret
