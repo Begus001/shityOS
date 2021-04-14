@@ -12,6 +12,8 @@ void pmm_blocks_used(void);
 void pmm_blocks_free(void);
 
 void *pmm_alloc(size_t size);
+void *pmm_alloc_block(void);
 void pmm_free(void *addr, size_t size);
+void pmm_free_block(void *addr);
 
 #endif

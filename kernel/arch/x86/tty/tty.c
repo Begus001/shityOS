@@ -12,7 +12,7 @@ static size_t MAX_COLS = 80, MAX_ROWS = 25;
 
 static size_t col, row;
 static u8 color;
-static int8 color_buf = -1;
+static i8 color_buf = -1;
 
 void tty_init(void)
 {
