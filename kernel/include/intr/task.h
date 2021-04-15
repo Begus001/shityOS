@@ -1,7 +1,7 @@
 #ifndef KERNEL_TASK_H
 #define KERNEL_TASK_H
 
-#include <sys/def/int.h>
+#include <def/int.h>
 
 typedef struct {
 	u32 eax;

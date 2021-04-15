@@ -1,11 +1,11 @@
-#include <sys/def/int.h>
+#include <def/int.h>
 #include <stdbool.h>
-#include <intr/pic.h>
+#include "intr/pic.h"
 #include <tty/tty.h>
 #include <tty/serial.h>
-#include <gdt/gdt.h>
-#include <intr/task.h>
-#include <intr/pit.h>
+#include <gdt.h>
+#include "intr/task.h"
+#include "intr/pit.h"
 
 #include <intr/intr.h>
 

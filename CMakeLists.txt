@@ -8,10 +8,6 @@ set(CMAKE_BUILD_TYPE Debug)
 
 project(kernel LANGUAGES C ASM_NASM)
 
-set(ARCH x86)
-add_compile_definitions(${ARCH})  # Set arch for preprocessor
-
-
 # DEBUG FLAGS #
 
 #add_compile_definitions(DBG_INTR)
@@ -22,25 +18,25 @@ set(CMAKE_VERBOSE_MAKEFILE ON)  # Does not work for ninja
 
 set(KERNEL_ELF kernel.elf)
 
-if (${ARCH} MATCHES x86)  # Select arch linkerscript
-
-	message(STATUS "Generating x86 files")
-	set(KERNEL_LINKER "${CMAKE_SOURCE_DIR}/kernel/arch/x86/kernel.ld")
-
-endif ()
+set(KERNEL_LINKER "${CMAKE_SOURCE_DIR}/kernel/kernel.ld")
 
 set(KERNEL_C_FLAGS -ffreestanding -O0 -Wall -Wextra -nostdlib -masm=intel -std=gnu11 -ggdb)
 set(KERNEL_LD_FLAGS -T${KERNEL_LINKER} -ffreestanding -O0 -nostdlib -ggdb)
 
 add_executable(${KERNEL_ELF}
-		kernel/init.c
-		kernel/include/tty/tty.h
-		kernel/string.c
-		kernel/include/sys/string.h
-		kernel/include/tty/serial.h
-		kernel/include/sys/def/int.h
-		kernel/include/intr/intr.h
-		)
+		kernel/impl/init.c
+		kernel/impl/mm/string.c
+		kernel/impl/boot/boot.asm
+		kernel/impl/tty/serial.c
+		kernel/impl/gdt.c
+		kernel/impl/tty/tty.c
+		kernel/impl/intr/idt.c
+		kernel/impl/intr/pic.c
+		kernel/impl/intr/handler.c
+		kernel/impl/intr/intr_stub.asm
+		kernel/impl/mm/pmm.c
+		kernel/impl/mm/vmm.c
+		kernel/impl/mm/kmalloc.c)
 
 target_compile_options(${KERNEL_ELF} PRIVATE
 		$<$<COMPILE_LANGUAGE:C>:${KERNEL_C_FLAGS}>
@@ -53,26 +49,6 @@ target_link_options(${KERNEL_ELF} PRIVATE
 target_include_directories(${KERNEL_ELF} PRIVATE
 		kernel/include
 		)
-
-if (${ARCH} MATCHES x86)  # Select arch source files
-
-	target_sources(${KERNEL_ELF} PRIVATE
-			kernel/arch/x86/boot/boot.asm
-			kernel/arch/x86/tty/serial.c
-			kernel/arch/x86/gdt/gdt.c
-			kernel/arch/x86/tty/tty.c
-			kernel/arch/x86/intr/idt.c
-			kernel/arch/x86/intr/pic.c
-			kernel/arch/x86/intr/handler.c
-			kernel/arch/x86/intr/intr_stub.asm
-			kernel/arch/x86/mm/pmm.c
-			)
-
-	target_include_directories(${KERNEL_ELF} PRIVATE
-			kernel/arch/x86
-			)
-
-endif ()
 
 add_custom_target(run
 		DEPENDS ${KERNEL_ELF}

@@ -1,7 +1,7 @@
 #ifndef KERNEL_MULTIBOOT_H
 #define KERNEL_MULTIBOOT_H
 
-#include <sys/def/int.h>
+#include <def/int.h>
 
 typedef struct {
 	u32 flags;

@@ -1,7 +1,7 @@
 #include <stdbool.h>
 #include <tty/serial.h>
 #include <tty/tty.h>
-#include <sys/string.h>
+#include <mm/mem.h>
 
 #include <mm/pmm.h>
 

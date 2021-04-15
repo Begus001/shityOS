@@ -1,6 +1,6 @@
 #include <tty/serial.h>
 
-#include "pic.h"
+#include "intr/pic.h"
 
 #define ICW1_READ_ICW4      0x01  // Expect ICW4
 #define ICW1_SINGLE         0x02  // Only one PIC in system

@@ -1,10 +1,10 @@
-#include <sys/def/int.h>
-#include <sys/string.h>
+#include <def/int.h>
+#include <mm/mem.h>
 
 #include <tty/serial.h>
 #include <tty/tty.h>
 
-#include "vga_text.h"
+#include "tty/vga_text.h"
 
 static u16 *vidmem = (u16 *) 0xB8000;
 

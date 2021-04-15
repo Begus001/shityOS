@@ -1,7 +1,7 @@
 #ifndef KERNEL_PMM_H
 #define KERNEL_PMM_H
 
-#include <sys/def/int.h>
+#include <def/int.h>
 #include <boot/multiboot.h>
 #include <stddef.h>
 

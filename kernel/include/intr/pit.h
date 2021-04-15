@@ -2,8 +2,8 @@
 #define KERNEL_PIT_H
 
 #include <stdbool.h>
-#include <sys/def/int.h>
-#include <sys/util.h>
+#include <def/int.h>
+#include <util.h>
 
 #define PIT_FREQ 1193181
 

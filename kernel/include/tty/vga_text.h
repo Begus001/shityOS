@@ -1,9 +1,9 @@
 #ifndef KERNEL_VGA_TEXT_H
 #define KERNEL_VGA_TEXT_H
 
-#include <sys/def/int.h>
+#include <def/int.h>
 
-#include "vga_color.h"
+#include "tty/vga_color.h"
 
 static inline u8 vga_get_color(enum color fg, enum color bg)
 {

@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdarg.h>
 
-#include <sys/def/color.h>
+#include <def/color.h>
 
 #define PUTN_BUF_MAX 256
 #define PUTN_MAX 0xFFFFFFFF
