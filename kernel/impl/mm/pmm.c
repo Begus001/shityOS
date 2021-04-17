@@ -136,7 +136,7 @@ void *pmm_alloc(size_t size)
 		}
 	}
 	
-	return (void *) 0x0;
+	return NULL;
 }
 
 void *pmm_alloc_block(void)
@@ -154,7 +154,7 @@ void *pmm_alloc_block(void)
 		}
 	}
 	
-	return (void *) 0x0;
+	return NULL;
 }
 
 void pmm_free(void *addr, size_t size)

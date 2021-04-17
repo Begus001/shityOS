@@ -19,12 +19,12 @@ void *kmalloc_internal(u32 size, bool page_align, u32 *physical_addr);
 
 static inline void *kmalloc(u32 size)
 {
-	return kmalloc_internal(size, false, 0x0);
+	return kmalloc_internal(size, false, NULL);
 }
 
 static inline void *kamalloc(u32 size)
 {
-	return kmalloc_internal(size, true, 0x0);
+	return kmalloc_internal(size, true, NULL);
 }
 
 static inline void *kpmalloc(u32 size, u32 *physical_addr)
