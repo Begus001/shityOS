@@ -2,8 +2,8 @@
 
 void *memcpy(void *dest, const void *src, size_t n)
 {
-	u8 *d = (u8 *) dest;
-	const u8 *s = (u8 *) src;
+	char *d = (char *) dest;
+	const char *s = (char *) src;
 	
 	while (n--)
 		*d++ = *s++;
@@ -11,14 +11,41 @@ void *memcpy(void *dest, const void *src, size_t n)
 	return dest;
 }
 
-void *memset(void *dest, u8 c, size_t n)
+void *memmove(void *dest, const void *src, size_t n)
 {
-	u8 *d = (u8 *) dest;
+	char *d = (char *) dest;
+	
+	char *tmp = (char *) kmalloc(n);
+	memcpy(tmp, src, n);
+	
+	while(n--) {
+		*d++ = *tmp++;
+	}
+	
+	// FIXME: Free tmp when sufficient heap is available
+}
+
+void *memset(void *dest, char c, size_t n)
+{
+	char *d = (char *) dest;
 	
 	while (n--)
 		*d++ = c;
 	
 	return (void *) dest;
+}
+
+int memcmp(const void *str1, const void *str2, size_t n)
+{
+	const char *s1 = (char *) str1;
+	const char *s2 = (char *) str2;
+	
+	while (n-- && (*s1 == *s2)) {
+		s1++;
+		s2++;
+	}
+	
+	return *s1 - *s2;
 }
 
 size_t strlen(const char *str)
@@ -49,4 +76,17 @@ char *strcat(char *dest, const char *src)
 	
 	*p = '\0';
 	return dest;
+}
+
+int strcmp(const char *str1, const char *str2)
+{
+	const char *s1 = (char *) str1;
+	const char *s2 = (char *) str2;
+	
+	while (*s1 && (*s1 == *s2)) {
+		s1++;
+		s2++;
+	}
+	
+	return *s1 - *s2;
 }
