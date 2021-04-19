@@ -12,6 +12,7 @@ project(kernel LANGUAGES C ASM_NASM)
 
 #add_compile_definitions(DBG_INTR)
 #add_compile_definitions(DBG_TTY)
+#add_compile_definitions(DBG_VMM)
 
 
 set(CMAKE_VERBOSE_MAKEFILE ON)  # Does not work for ninja
@@ -36,7 +37,8 @@ add_executable(${KERNEL_ELF}
 		kernel/impl/intr/intr_stub.asm
 		kernel/impl/mm/pmm.c
 		kernel/impl/mm/vmm.c
-		kernel/impl/mm/kmalloc.c)
+		kernel/impl/mm/kmalloc.c
+		)
 
 target_compile_options(${KERNEL_ELF} PRIVATE
 		$<$<COMPILE_LANGUAGE:C>:${KERNEL_C_FLAGS}>
