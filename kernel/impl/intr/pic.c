@@ -39,7 +39,9 @@ void pic_init(void)
 	out8(PIC_DAT_ADDR, 0xFE);
 	out8(PIC_SL_DAT_ADDR, 0x0);
 
+#pragma region DBG_PRINT
 #ifdef DBG_INTR
 	dbgprintf("PICs intialized\n");
 #endif
+#pragma endregion
 }

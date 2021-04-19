@@ -12,7 +12,7 @@ static size_t MAX_COLS = 80, MAX_ROWS = 25;
 
 static size_t col, row;
 static u8 color;
-static i8 color_buf = -1;
+static int color_buf = -1;
 
 void tty_init(void)
 {
@@ -29,9 +29,11 @@ void tty_clear(void)
 	
 	col = row = 0;
 
+#pragma region DBG_PRINT
 #ifdef DBG_TTY
 	dbgprintf("Terminal cleared\n");
 #endif
+#pragma endregion
 }
 
 void tty_scroll_down(void)
@@ -46,9 +48,12 @@ void tty_scroll_down(void)
 		vidmem[i] = vga_clear_char(color);
 	
 	col = 0;
-#ifdef DBG_INTR
+
+#pragma region DBG_PRINT
+#ifdef DBG_TTY
 	dbgprintf("Terminal scrolled down\n");
 #endif
+#pragma endregion
 }
 
 void tty_set_color(enum color fg, enum color bg)
@@ -73,6 +78,7 @@ void tty_reset_color(void)
 static void putc(char c)
 {
 	switch (c) {
+		// TODO: Implement escape sequences
 		case '\n':
 			col = 0;
 			goto inc_row;

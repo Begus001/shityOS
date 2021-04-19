@@ -106,17 +106,21 @@ static void populate(void)
 
 	set_entry(0x20, clock_handler, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
 
+#pragma region DBG_PRINT
 #ifdef DBG_INTR
 	dbgprintf("Interrupt descriptor table created\n");
 #endif
+#pragma endregion
 }
 
 static void idt_load(void)
 {
 	__asm__ volatile("lidt %0" : : "m"(p_idt));
+#pragma region DBG_PRINT
 #ifdef DBG_INTR
 	dbgprintf("Interrupt descriptor table loaded\n");
 #endif
+#pragma endregion
 }
 
 void intr_init(void)
@@ -132,15 +136,19 @@ void intr_init(void)
 void intr_enable(void)
 {
 	__asm__ volatile("sti");
+#pragma region DBG_PRINT
 #ifdef DBG_INTR
 	dbgprintf("Interrupts enabled\n");
 #endif
+#pragma endregion
 }
 
 void intr_disable(void)
 {
 	__asm__ volatile("cli");
+#pragma region DBG_PRINT
 #ifdef DBG_INTR
 	dbgprintf("Interrupts disabled\n");
 #endif
+#pragma endregion
 }

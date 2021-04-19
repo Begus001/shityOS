@@ -22,6 +22,7 @@ void *memmove(void *dest, const void *src, size_t n)
 		*d++ = *tmp++;
 	}
 	
+	return dest;
 	// FIXME: Free tmp when sufficient heap is available
 }
 
