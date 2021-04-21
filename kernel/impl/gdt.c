@@ -18,11 +18,11 @@ struct gdt_entry {
 	u16 limit_lo;
 	u16 base_lo;
 	u8 base_hi;
-	u8 type: 4;
+	unsigned int type: 4;
 	bool segment: 1;
-	u8 dpl: 2;
+	unsigned int dpl: 2;
 	bool present: 1;
-	u8 limit_hi: 4;
+	unsigned int limit_hi: 4;
 	bool available: 1;
 	bool long_mode: 1;
 	bool protected_mode: 1;
@@ -71,8 +71,6 @@ static void gdt_load()
 	"jmp 0x8:flush;"
 	"flush:"
 	);
-	
-	dbgprintf("Global descriptor table loaded and flushed\n");
 }
 
 void gdt_init()
@@ -86,8 +84,6 @@ void gdt_init()
 	          true, true, false, true, true);
 	set_entry(4, 0, 0xFFFFF, GDT_TYPE_READ_WRITE | GDT_TYPE_IS_DATA_SEGMENT, true, RING3,
 	          true, true, false, true, true);
-	
-	dbgprintf("Global descriptor table created\n");
 	
 	gdt_load();
 }

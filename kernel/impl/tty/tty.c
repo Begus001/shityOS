@@ -18,8 +18,6 @@ void tty_init(void)
 {
 	color = vga_get_color(COLOR_WHITE, COLOR_BLACK);
 	tty_clear();
-	
-	dbgprintf("Terminal initialized\nColor: %x\n", color);
 }
 
 void tty_clear(void)
@@ -28,12 +26,6 @@ void tty_clear(void)
 		vidmem[i] = vga_clear_char(color);
 	
 	col = row = 0;
-
-#pragma region DBG_PRINT
-#ifdef DBG_TTY
-	dbgprintf("Terminal cleared\n");
-#endif
-#pragma endregion
 }
 
 void tty_scroll_down(void)
@@ -48,12 +40,6 @@ void tty_scroll_down(void)
 		vidmem[i] = vga_clear_char(color);
 	
 	col = 0;
-
-#pragma region DBG_PRINT
-#ifdef DBG_TTY
-	dbgprintf("Terminal scrolled down\n");
-#endif
-#pragma endregion
 }
 
 void tty_set_color(enum color fg, enum color bg)

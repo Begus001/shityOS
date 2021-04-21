@@ -28,9 +28,4 @@ void intr_exc_com_handle(context_t *cntxt)
 
 void intr_clock_handle(void)
 {
-#pragma region DBG_PRINT
-#ifdef DBG_INTR
-	dbgprintf("Clock interrupt\n");
-#endif
-#pragma endregion
 }
