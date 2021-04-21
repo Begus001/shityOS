@@ -16,27 +16,6 @@
 static page_directory_t *current_dir = NULL;
 static page_directory_t *kernel_dir;
 
-bool vmm_alloc_page(page_table_entry_t *entry)
-{
-	void *phys = pmm_alloc_block();
-	if (!phys)
-		return false;
-	
-	entry->page_addr = STRIP_12_LSB((u32) phys);
-	entry->present = true;
-	
-	return true;
-}
-
-void vmm_free_page(page_table_entry_t *entry)
-{
-	entry->present = false;
-	
-	void *phys = (void *) ADD_12_LSB(entry->page_addr);
-	if (phys)
-		pmm_free_block(phys);
-}
-
 static inline page_table_entry_t *pte_from_virt_addr(page_table_t *table, void *addr)
 {
 	if (table)
@@ -58,38 +37,17 @@ static inline void inval_tlb_entry(void *vaddr)
 
 bool vmm_map_page(void *paddr, void *vaddr)
 {
-#pragma region DBG_PRINT
-#ifdef DBG_VMM
-	dbgprintf("vmm_map_page: mapping %x to %x\n", (u32) paddr, (u32) vaddr);
-#endif
-#pragma endregion
 	page_directory_entry_t *dir_entry = pde_from_virt_addr(current_dir, vaddr);
 	
-	if (!dir_entry) {
-#pragma region DBG_PRINT
-#ifdef DBG_VMM
-		dbgprintf("vmm_map_page: current_dir NULL\n");
-#endif
-#pragma endregion
+	if (!dir_entry)
 		return false;
-	}
 	
 	page_table_t *table;
 	
 	if (dir_entry->present) {
-#pragma region DBG_PRINT
-#ifdef DBG_VMM
-		dbgprintf("vmm_map_page: dir_entry present\n");
-#endif
-#pragma endregion
 		table = (page_table_t *) (ADD_12_LSB((u32) dir_entry->page_table_addr));
 	} else {
-#pragma region DBG_PRINT
-#ifdef DBG_VMM
-		dbgprintf("vmm_map_page: dir_entry not present, allocating new page table\n");
-#endif
-#pragma endregion
-		table = kamalloc(sizeof(page_table_t));
+		table = pmm_alloc_block();
 		if (!table)
 			return false;
 		
@@ -107,12 +65,6 @@ bool vmm_map_page(void *paddr, void *vaddr)
 	
 	inval_tlb_entry(vaddr);
 
-#pragma region DBG_PRINT
-#ifdef DBG_VMM
-	dbgprintf("vmm_map_page: done\n");
-#endif
-#pragma endregion
-	
 	return true;
 }
 
@@ -136,7 +88,7 @@ void vmm_activate_paging(void)
 
 void vmm_init(void)
 {
-	kernel_dir = kamalloc(sizeof(page_directory_t));
+	kernel_dir = pmm_alloc_block();
 	memset(kernel_dir, 0, sizeof(page_directory_t));
 	vmm_change_directory(kernel_dir);
 	
