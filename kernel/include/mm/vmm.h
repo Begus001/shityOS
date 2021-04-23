@@ -42,9 +42,10 @@ typedef struct {
 	page_directory_entry_t entries[PAGE_DIR_MAX];
 } page_directory_t;
 
+page_directory_t *vmm_create_directory(void);
 bool vmm_map_page(void *paddr, void *vaddr);
-bool vmm_change_directory(page_directory_t *dir);
 void vmm_activate_paging(void);
-void vmm_init(void);
+bool vmm_change_directory(page_directory_t *dir);
+bool vmm_init(void);
 
 #endif

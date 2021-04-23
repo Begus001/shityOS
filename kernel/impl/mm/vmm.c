@@ -35,6 +35,24 @@ static inline void inval_tlb_entry(void *vaddr)
 	__asm__ volatile("invlpg %0"::"m"(vaddr));
 }
 
+static inline page_table_t *create_table(void)
+{
+	page_table_t *table = pmm_alloc_block();
+	if (!table)
+		return NULL;
+	memset(table, 0, sizeof(page_table_t));
+	return table;
+}
+
+page_directory_t *vmm_create_directory(void)
+{
+	page_directory_t *dir = pmm_alloc_block();
+	if (!dir)
+		return NULL;
+	memset(dir, 0, sizeof(page_directory_t));
+	return dir;
+}
+
 bool vmm_map_page(void *paddr, void *vaddr)
 {
 	page_directory_entry_t *dir_entry = pde_from_virt_addr(current_dir, vaddr);
@@ -47,11 +65,8 @@ bool vmm_map_page(void *paddr, void *vaddr)
 	if (dir_entry->present) {
 		table = (page_table_t *) (ADD_12_LSB((u32) dir_entry->page_table_addr));
 	} else {
-		table = pmm_alloc_block();
-		if (!table)
+		if (!(table = create_table()))
 			return false;
-		
-		memset(table, 0, sizeof(page_table_t));
 		
 		dir_entry->present = true;
 		dir_entry->writable = true;
@@ -64,7 +79,7 @@ bool vmm_map_page(void *paddr, void *vaddr)
 	table_entry->page_addr = STRIP_12_LSB((u32) paddr);
 	
 	inval_tlb_entry(vaddr);
-
+	
 	return true;
 }
 
@@ -86,10 +101,11 @@ void vmm_activate_paging(void)
 	:);
 }
 
-void vmm_init(void)
+bool vmm_init(void)
 {
-	kernel_dir = pmm_alloc_block();
-	memset(kernel_dir, 0, sizeof(page_directory_t));
+	if (!(kernel_dir = vmm_create_directory()))
+		return false;
+	
 	vmm_change_directory(kernel_dir);
 	
 	for (int i = 0; (u32) i < 1024 * 4096; i += 4096) {
@@ -97,4 +113,5 @@ void vmm_init(void)
 	}
 	
 	vmm_activate_paging();
+	return true;
 }
