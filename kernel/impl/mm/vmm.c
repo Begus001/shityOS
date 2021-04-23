@@ -1,4 +1,4 @@
-#include <tty/serial.h>
+
 #include <mm/mem.h>
 #include <mm/pmm.h>
 
@@ -108,7 +108,7 @@ bool vmm_init(void)
 	
 	vmm_change_directory(kernel_dir);
 	
-	for (int i = 0; (u32) i < 1024 * 4096; i += 4096) {
+	for (u32 i = 0; i < 4096 * 1024; i += 4096) {
 		vmm_map_page((void *) i, (void *) i);
 	}
 	

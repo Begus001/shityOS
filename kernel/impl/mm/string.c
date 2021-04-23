@@ -1,4 +1,5 @@
 #include <mm/mem.h>
+#include <mm/pmm.h>
 
 void *memcpy(void *dest, const void *src, size_t n)
 {
@@ -15,7 +16,7 @@ void *memmove(void *dest, const void *src, size_t n)
 {
 	char *d = (char *) dest;
 	
-	char *tmp = (char *) kmalloc(n);
+	char *tmp = (char *) pmm_alloc(n);
 	memcpy(tmp, src, n);
 	
 	while(n--) {

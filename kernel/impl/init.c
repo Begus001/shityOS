@@ -19,12 +19,12 @@ _Noreturn void init(multiboot_info_t *mb_info)
 	pmm_init(mb_info);
 	pmm_memmap();
 	
-	kprintf("Welcome to shityOS, the shittiest OS in the world!\n");
-	dbgprintf("Welcome to shityOS, the shittiest OS in the world!\n");
-	
 	intr_enable();
 	
 	vmm_init();
 
+	kprintf("Welcome to shityOS, the shittiest OS in the world!\n");
+	dbgprintf("Welcome to shityOS, the shittiest OS in the world!\n");
+	
 	while (1);
 }

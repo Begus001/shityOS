@@ -9,7 +9,7 @@
 #define BITS       32
 #define BITMAP_MAX 4294967296/BLOCK_SIZE/BITS  // 32768
 
-static u32 *bitmap;
+static u32 bitmap[BITMAP_MAX];
 static u32 blocks_used = BITMAP_MAX * BITS;
 
 extern const void kernel_start;
@@ -36,8 +36,6 @@ static inline void mark_used(void *addr)
 
 void pmm_init(void *info_struct)
 {
-	bitmap = kamalloc(sizeof(u32) * BITMAP_MAX);
-	
 	memset(bitmap, (char) 0xFF, sizeof(u32) * BITMAP_MAX);  // Mark all used
 	
 	multiboot_info_t *mb_info = (multiboot_info_t *) info_struct;
@@ -107,14 +105,16 @@ void pmm_memmap(void)
 	dbgprintf("Blocks in use: %d\nBlocks free: %d\n", used, free);
 }
 
-void pmm_blocks_used(void)
+u32 pmm_blocks_used(void)
 {
 	dbgprintf("Blocks in use: %d\n", blocks_used);
+	return blocks_used;
 }
 
-void pmm_blocks_free(void)
+u32 pmm_blocks_free(void)
 {
 	dbgprintf("Blocks free: %d\n", BITMAP_MAX * BITS - blocks_used);
+	return BITMAP_MAX * BITS - blocks_used;
 }
 
 void *pmm_alloc(size_t size)

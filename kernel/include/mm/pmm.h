@@ -8,8 +8,8 @@
 void pmm_init(void *);
 
 void pmm_memmap(void);
-void pmm_blocks_used(void);
-void pmm_blocks_free(void);
+u32 pmm_blocks_used(void);
+u32 pmm_blocks_free(void);
 
 void *pmm_alloc(size_t size);
 void *pmm_alloc_block(void);

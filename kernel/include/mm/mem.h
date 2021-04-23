@@ -15,26 +15,4 @@ char *strcpy(char *dest, const char *src);
 char *strcat(char *dest, const char *src);
 int strcmp(const char *str1, const char *str2);
 
-void *kmalloc_internal(u32 size, bool page_align, u32 *physical_addr);
-
-static inline void *kmalloc(u32 size)
-{
-	return kmalloc_internal(size, false, NULL);
-}
-
-static inline void *kamalloc(u32 size)
-{
-	return kmalloc_internal(size, true, NULL);
-}
-
-static inline void *kpmalloc(u32 size, u32 *physical_addr)
-{
-	return kmalloc_internal(size, false, physical_addr);
-}
-
-static inline void *kapmalloc(u32 size, u32 *physical_addr)
-{
-	return kmalloc_internal(size, true, physical_addr);
-}
-
 #endif
