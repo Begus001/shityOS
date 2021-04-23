@@ -45,6 +45,8 @@ typedef struct {
 page_directory_t *vmm_create_directory(void);
 bool vmm_map_page(void *paddr, void *vaddr);
 void vmm_activate_paging(void);
+void *vmm_alloc_page(void);
+bool vmm_free_page(void *addr);
 bool vmm_change_directory(page_directory_t *dir);
 bool vmm_init(void);
 

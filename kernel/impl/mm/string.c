@@ -1,5 +1,5 @@
 #include <mm/mem.h>
-#include <mm/pmm.h>
+#include <mm/vmm.h>
 
 void *memcpy(void *dest, const void *src, size_t n)
 {
@@ -16,7 +16,7 @@ void *memmove(void *dest, const void *src, size_t n)
 {
 	char *d = (char *) dest;
 	
-	char *tmp = (char *) pmm_alloc(n);
+	char *tmp = (char *) vmm_alloc_page();
 	memcpy(tmp, src, n);
 	
 	while(n--) {
