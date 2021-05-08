@@ -1,4 +1,3 @@
-
 #include <mm/mem.h>
 #include <mm/pmm.h>
 
@@ -12,8 +11,6 @@
 #define PAGE_DIR_INDEX(x)   ((x) >> 22)
 #define STRIP_12_LSB(x)     ((x) >> 12)
 #define ADD_12_LSB(x)       ((x) << 12)
-
-extern void kernel_end;
 
 static page_directory_t *current_dir = NULL;
 static page_directory_t *kernel_dir;
@@ -111,18 +108,22 @@ void vmm_activate_paging(void)
 	:);
 }
 
-void *vmm_alloc_page(void)
+void *vmm_alloc_at(void *vaddr)
 {
-	// Identity map everything for now, until page faults can be handled
-	void *addr = pmm_alloc_block();
-	if (!addr)
+	void *paddr = pmm_alloc_block();
+	if (!paddr)
 		return NULL;
-	if (!vmm_map_page(addr, addr))
+	if (!vmm_map_page(paddr, vaddr))
 		return NULL;
-	return addr;
+	return vaddr;
 }
 
-bool vmm_free_page(void *addr)
+void *vmm_alloc(void)
+{
+	return vmm_alloc_at(pmm_alloc_block());
+}
+
+bool vmm_free(void *addr)
 {
 	if (!current_dir)
 		return false;
@@ -141,15 +142,11 @@ bool vmm_init(void)
 	
 	vmm_change_directory(kernel_dir);
 	
-	for (u32 i = 0; i < 4096 * 1024; i += 4096) {
+	for (int i = 0; i < (int) 4096 * 1024; i += 4096) {
 		vmm_map_page((void *) i, (void *) i);
 	}
 	
 	vmm_activate_paging();
-	
-	for (u32 i = 4096 * 1024 - 1; i <= 0; i -= 4096) {
-		vmm_free_page((void *) i);
-	}
 	
 	return true;
 }

@@ -16,15 +16,17 @@ void *memmove(void *dest, const void *src, size_t n)
 {
 	char *d = (char *) dest;
 	
-	char *tmp = (char *) vmm_alloc_page();
+	char *tmp = (char *) vmm_alloc();
 	memcpy(tmp, src, n);
 	
 	while(n--) {
 		*d++ = *tmp++;
 	}
 	
+	vmm_free(tmp);
+	
 	return dest;
-	// FIXME: Free tmp when sufficient heap is available
+	// FIXME: Malloc tmp when heap is available
 }
 
 void *memset(void *dest, char c, size_t n)
