@@ -45,7 +45,7 @@ void pmm_init(void *info_struct)
 		__asm__ volatile("cli;hlt");
 	}
 	
-	multiboot_mmap_t *mb_mmap = mb_info->mmap_addr;
+	multiboot_mmap_t *mb_mmap = (multiboot_mmap_t *) mb_info->mmap_addr;
 	multiboot_mmap_t *mb_mmap_end = (void *) ((uptr) mb_mmap + mb_info->mmap_length);
 	
 	while (mb_mmap < mb_mmap_end) {

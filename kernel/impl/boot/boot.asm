@@ -1,5 +1,5 @@
 MB_MAGIC: equ 0x1BADB002
-MB_FLAGS: equ 0x0
+MB_FLAGS: equ 0x3  ; Page aligned modules, give memory map info
 MB_CHKSM: equ -(MB_MAGIC + MB_FLAGS)
 
 section .multiboot
