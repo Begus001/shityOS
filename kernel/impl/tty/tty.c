@@ -1,12 +1,12 @@
 #include <def/int.h>
+#include <def/kernel.h>
 #include <mm/mem.h>
-
 #include <tty/serial.h>
 #include <tty/tty.h>
 
 #include "tty/vga_text.h"
 
-static u16 *vidmem = (u16 *) 0xB8000;
+static u16 *vidmem = (u16 *) (0xB8000 + KERNEL_VIRT_BASE);
 
 static size_t MAX_COLS = 80, MAX_ROWS = 25;
 

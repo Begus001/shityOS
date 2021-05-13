@@ -12,6 +12,8 @@
 #define STRIP_12_LSB(x)     ((x) >> 12)
 #define ADD_12_LSB(x)       ((x) << 12)
 
+extern page_directory_t *kernel_page_dir;
+
 static page_directory_t *current_dir = NULL;
 static page_directory_t *kernel_dir;
 
@@ -137,16 +139,9 @@ bool vmm_free(void *addr)
 
 bool vmm_init(void)
 {
-	if (!(kernel_dir = vmm_create_directory()))
-		return false;
+	kernel_dir = kernel_page_dir;
 	
-	vmm_change_directory(kernel_dir);
-	
-	for (int i = 0; i < (int) 4096 * 1024; i += 4096) {
-		vmm_map_page((void *) i, (void *) i);
-	}
-	
-	vmm_activate_paging();
+	current_dir = kernel_dir;
 	
 	return true;
 }

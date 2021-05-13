@@ -2,18 +2,20 @@
 #include <tty/serial.h>
 #include <tty/tty.h>
 #include <mm/mem.h>
+#include <def/kernel.h>
 
 #include <mm/pmm.h>
 
 #define BLOCK_SIZE 4096
 #define BITS       32
-#define BITMAP_MAX 4294967296/BLOCK_SIZE/BITS  // 32768
+#define BITMAP_MAX (4294967296/BLOCK_SIZE/BITS)  // 32768
 
 static u32 bitmap[BITMAP_MAX];
 static u32 blocks_used = BITMAP_MAX * BITS;
 
 extern const void kernel_start;
 extern const void kernel_end;
+extern u32 kernel_page_table_zero;
 
 static inline bool test_bit(size_t bit)
 {
@@ -23,6 +25,8 @@ static inline bool test_bit(size_t bit)
 static inline void mark_free(void *addr)
 {
 	uptr index = (uptr) addr / BLOCK_SIZE;
+	if (!(bitmap[index / BITS] & (1 << index % BITS)))
+		return;
 	bitmap[index / BITS] &= ~(1 << (index % BITS));
 	blocks_used--;
 }
@@ -30,6 +34,8 @@ static inline void mark_free(void *addr)
 static inline void mark_used(void *addr)
 {
 	uptr index = (uptr) addr / BLOCK_SIZE;
+	if (bitmap[index / BITS] & (1 << index % BITS))
+		return;
 	bitmap[index / BITS] |= (1 << (index % BITS));
 	blocks_used++;
 }
@@ -45,7 +51,7 @@ void pmm_init(void *info_struct)
 		__asm__ volatile("cli;hlt");
 	}
 	
-	multiboot_mmap_t *mb_mmap = (multiboot_mmap_t *) mb_info->mmap_addr;
+	multiboot_mmap_t *mb_mmap = (multiboot_mmap_t *) (mb_info->mmap_addr + KERNEL_VIRT_BASE);
 	multiboot_mmap_t *mb_mmap_end = (void *) ((uptr) mb_mmap + mb_info->mmap_length);
 	
 	while (mb_mmap < mb_mmap_end) {
@@ -68,6 +74,7 @@ void pmm_init(void *info_struct)
 		addr += BLOCK_SIZE;
 	}
 	
+	mark_free((void *)&kernel_page_table_zero);
 	mark_used((void *) 0);
 }
 
