@@ -16,17 +16,17 @@ void *memmove(void *dest, const void *src, size_t n)
 {
 	char *d = (char *) dest;
 	
-	char *tmp = (char *) vmm_alloc();
-	memcpy(tmp, src, n);
+	char buf[4096];
+	memcpy(buf, src, n);
+	
+	char *tmp = buf;
 	
 	while(n--) {
 		*d++ = *tmp++;
 	}
 	
-	vmm_free(tmp);
-	
 	return dest;
-	// FIXME: Malloc tmp when heap is available
+	// FIXME: Malloc buf when heap is available
 }
 
 void *memset(void *dest, char c, size_t n)

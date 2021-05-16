@@ -21,7 +21,8 @@ kernel_page_dir:
 	dd (kernel_page_table_zero - KERNEL_VIRT_BASE + 0x00000083)
 	times (KERNEL_PD_INDEX - 1) dd 0
 	dd (kernel_page_table_hh - KERNEL_VIRT_BASE + 0x00000083)
-	times (1024 - KERNEL_PD_INDEX - 1) dd 0
+	times (1024 - KERNEL_PD_INDEX - 2) dd 0
+	dd (kernel_page_dir - KERNEL_VIRT_BASE + 0x00000083)  ; Map page dir onto itself
 
 global kernel_page_table_zero
 kernel_page_table_zero:
@@ -83,6 +84,7 @@ init_paging:  ; Identity map first 4 MiB, map 4 MiB at 0xC0000000 to 0x0 and ena
 	inc eax
 	cmp eax, 1024
 	jne .unmap_first_four_megs
+	mov dword [kernel_page_dir], 0
 	jmp _start.after_paging_init
 
 global _start

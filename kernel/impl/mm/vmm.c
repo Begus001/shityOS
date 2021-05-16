@@ -59,12 +59,23 @@ page_directory_t *vmm_create_directory(void)
 	if (!dir)
 		return NULL;
 	memset(dir, 0, sizeof(page_directory_t));
+	dir->entries[1023].present = true;
+	dir->entries[1023].writable = true;
+	dir->entries[1023].page_table_addr = STRIP_12_LSB((u32) dir);
 	return dir;
 }
 
-bool vmm_map_page(void *paddr, void *vaddr)
+bool vmm_map_page_current(void *paddr, void *vaddr, bool user)
 {
-	page_directory_entry_t *dir_entry = pde_from_virt_addr(current_dir, vaddr);
+	return vmm_map_page(current_dir, paddr, vaddr, user);
+}
+
+bool vmm_map_page(page_directory_t *dir, void *paddr, void *vaddr, bool user)
+{
+	if (!dir)
+		return false;
+	
+	page_directory_entry_t *dir_entry = pde_from_virt_addr(dir, vaddr);
 	
 	if (!dir_entry)
 		return false;
@@ -79,12 +90,14 @@ bool vmm_map_page(void *paddr, void *vaddr)
 		
 		dir_entry->present = true;
 		dir_entry->writable = true;
+		dir_entry->user_access = true;
 		dir_entry->page_table_addr = STRIP_12_LSB((u32) table);
 	}
 	
 	page_table_entry_t *table_entry = pte_from_virt_addr(table, vaddr);
 	table_entry->present = true;
 	table_entry->writable = true;
+	table_entry->user_access = user;
 	table_entry->page_addr = STRIP_12_LSB((u32) paddr);
 	
 	inval_tlb_entry(vaddr);
@@ -110,27 +123,22 @@ void vmm_activate_paging(void)
 	:);
 }
 
-void *vmm_alloc_at(void *vaddr)
+void *vmm_alloc_at(void *vaddr, bool user)
 {
 	void *paddr = pmm_alloc_block();
 	if (!paddr)
 		return NULL;
-	if (!vmm_map_page(paddr, vaddr))
+	if (!vmm_map_page_current(paddr, vaddr, user))
 		return NULL;
 	return vaddr;
 }
 
-void *vmm_alloc(void)
-{
-	return vmm_alloc_at(pmm_alloc_block());
-}
-
-bool vmm_free(void *addr)
+bool vmm_free(void *vaddr)
 {
 	if (!current_dir)
 		return false;
-	pmm_free_block(addr);
-	page_table_entry_t *page = pte_from_virt_addr_absolute(addr);
+	page_table_entry_t *page = pte_from_virt_addr_absolute(vaddr);
+	pmm_free_block((void *) ADD_12_LSB((page->page_addr)));
 	page->present = false;
 	page->writable = false;
 	page->page_addr = 0;
