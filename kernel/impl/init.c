@@ -7,6 +7,7 @@
 #include <gdt.h>
 #include <intr/intr.h>
 #include <boot/multiboot.h>
+#include <io/keyboard.h>
 
 _Noreturn void init(multiboot_info_t *mb_info)
 {
@@ -20,6 +21,8 @@ _Noreturn void init(multiboot_info_t *mb_info)
 	pmm_memmap();
 	
 	vmm_init();
+	
+	kb_init();
 	
 	kprintf("Welcome to shityOS, the shittiest OS in the world!\n");
 	dbgprintf("Welcome to shityOS, the shittiest OS in the world!\n");

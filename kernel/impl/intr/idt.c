@@ -40,6 +40,7 @@ extern void exc_com_0x14(void);
 extern void exc_com_0x1E(void);
 
 extern void clock_handler(void);
+extern void keyboard_handler(void);
 
 struct idt_entry {
 	u16 offset_lo;
@@ -105,6 +106,7 @@ static void populate(void)
 	set_entry(0x1E, exc_com_0x1E, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
 
 	set_entry(0x20, clock_handler, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
+	set_entry(0x21, keyboard_handler, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
 }
 
 static void idt_load(void)
@@ -116,7 +118,7 @@ void intr_init(void)
 {
 	pic_init();
 	pit_init();
-	pit_load_hz(20);
+	pit_load_hz(2000);
 
 	populate();
 	idt_load();

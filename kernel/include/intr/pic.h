@@ -1,7 +1,7 @@
 #ifndef KERNEL_PIC_H
 #define KERNEL_PIC_H
 
-#include <util.h>
+#include <io/util.h>
 
 #define PIC_CMD_ADDR    0x20
 #define PIC_DAT_ADDR    0x21
