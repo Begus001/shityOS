@@ -35,7 +35,7 @@ void pic_init(void)
 	out8(PIC_SL_DAT_ADDR, ICW3_MASTER_IRQ);
 	out8(PIC_SL_DAT_ADDR, ICW4_NO_MICRO_MODE | ICW4_NESTED_MODE | ICW4_AUTO_EOI);
 
-	// Demask IRQ0
-	out8(PIC_DAT_ADDR, 0xFE);
+	// Demask IRQ0, IRQ1
+	out8(PIC_DAT_ADDR, 0xFC);
 	out8(PIC_SL_DAT_ADDR, 0x0);
 }

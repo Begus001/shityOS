@@ -16,6 +16,7 @@ void tty_scroll_down(void);
 void tty_set_color(enum color fg, enum color background);
 void tty_set_color_tmp(enum color fg, enum color background);
 void tty_reset_color(void);
+void tty_backspace(void);
 
 size_t kvsprintf(char *buf, const char *fmt, va_list va);
 size_t ksprintf(char *buf, const char *fmt, ...);

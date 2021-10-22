@@ -37,6 +37,7 @@ add_executable(${KERNEL_ELF}
 		kernel/impl/intr/intr_stub.asm
 		kernel/impl/mm/pmm.c
 		kernel/impl/mm/vmm.c
+		kernel/impl/io/keyboard.c
 		)
 
 target_compile_options(${KERNEL_ELF} PRIVATE

@@ -61,6 +61,20 @@ void tty_reset_color(void)
 	color = color_buf;
 }
 
+void tty_backspace(void)
+{
+	if (col > 0) {
+		col--;
+	} else {
+		if (row > 0) {
+			row--;
+			col = MAX_COLS - 1;
+		}
+	}
+	
+	vidmem[row * MAX_COLS + col] = vga_clear_char(color);
+}
+
 static void putc(char c)
 {
 	switch (c) {
