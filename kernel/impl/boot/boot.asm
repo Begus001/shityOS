@@ -41,22 +41,22 @@ init_paging:  ; Identity map first 4 MiB, map 4 MiB at 0xC0000000 to 0x0 and ena
 	xor eax, eax
 	xor edx, edx
 .map:
-		mov ecx, edx
-		or ecx, 3
-		cmp byte [paging_setup_switch - KERNEL_VIRT_BASE], 0
-		je .identity_map
+	mov ecx, edx
+	or ecx, 3
+	cmp byte [paging_setup_switch - KERNEL_VIRT_BASE], 0
+	je .identity_map
 
-		mov [(kernel_page_table_hh - KERNEL_VIRT_BASE) + eax * 4], ecx
-		jmp .increment_and_compare
+	mov [(kernel_page_table_hh - KERNEL_VIRT_BASE) + eax * 4], ecx
+	jmp .increment_and_compare
 
 .identity_map:
-		mov [(kernel_page_table_zero - KERNEL_VIRT_BASE) + eax * 4], ecx
+	mov [(kernel_page_table_zero - KERNEL_VIRT_BASE) + eax * 4], ecx
 
 .increment_and_compare:
-		add edx, 0x1000
-		inc eax
-		cmp eax, 1024
-		jne .map
+	add edx, 0x1000
+	inc eax
+	cmp eax, 1024
+	jne .map
 
 	cmp byte [paging_setup_switch - KERNEL_VIRT_BASE], 0
 	jne .enable_paging

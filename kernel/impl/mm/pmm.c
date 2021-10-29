@@ -47,7 +47,7 @@ void pmm_init(void *info_struct)
 	multiboot_info_t *mb_info = (multiboot_info_t *) info_struct;
 	
 	if (!(mb_info->flags & (1 << 6))) {
-		dbgprintf("No memory map information was given by the bootloader");
+		dbgprintf("PMM: No memory map information was given by the bootloader");
 		__asm__ volatile("cli;hlt");
 	}
 	
@@ -69,12 +69,14 @@ void pmm_init(void *info_struct)
 	
 	uptr addr = (uptr) &kernel_start;
 	uptr end_addr = (uptr) &kernel_end;
+	dbgprintf("PMM: Kernel size: %x (%d)\n", (u32) &kernel_end - (u32) &kernel_start,
+	          (u32) &kernel_end - (u32) &kernel_start);
 	while (addr < end_addr) {  // Mark kernel used again
 		mark_used((void *) addr);
 		addr += BLOCK_SIZE;
 	}
 	
-	mark_free((void *)&kernel_page_table_zero);
+	mark_free((void *) &kernel_page_table_zero);
 	mark_used((void *) 0);
 }
 
@@ -83,7 +85,7 @@ void pmm_memmap(void)
 	size_t used = 0, free = 0, stretch_start = 0, stretch_end, stretch_count = 0;
 	bool stretch_used;
 	
-	dbgprintf("Memory map:\n");
+	dbgprintf("PMM: Memory map:\n");
 	
 	if (bitmap[0] & 0x1)
 		stretch_used = true;
@@ -93,7 +95,7 @@ void pmm_memmap(void)
 	for (size_t i = 0; i < BITMAP_MAX * BITS; i++) {
 		if (test_bit(i) != stretch_used) {
 			stretch_end = i - 1;
-			dbgprintf("Stretch %d: blocks %d to %d %s (%d)\n", stretch_count++, stretch_start,
+			dbgprintf("PMM: Stretch %d: blocks %d to %d %s (%d)\n", stretch_count++, stretch_start,
 			          stretch_end, stretch_used ? "used" : "free", stretch_end - stretch_start + 1);
 			stretch_used = !stretch_used;
 			stretch_start = stretch_end + 1;
@@ -106,21 +108,22 @@ void pmm_memmap(void)
 	}
 	
 	stretch_end = (BITMAP_MAX - 1) * BITS + BITS - 1;
-	dbgprintf("Stretch %d: blocks %d to %d %s (%d)\n", stretch_count, stretch_start, stretch_end,
+	dbgprintf("PMM: Stretch %d: blocks %d to %d %s (%d)\n", stretch_count, stretch_start,
+			  stretch_end,
 	          stretch_used ? "used" : "free", stretch_end - stretch_start + 1);
 	
-	dbgprintf("Blocks in use: %d\nBlocks free: %d\n", used, free);
+	dbgprintf("PMM: Blocks in use: %d\nPMM: Blocks free: %d\n", used, free);
 }
 
 u32 pmm_blocks_used(void)
 {
-	dbgprintf("Blocks in use: %d\n", blocks_used);
+	dbgprintf("PMM: Blocks in use: %d\n", blocks_used);
 	return blocks_used;
 }
 
 u32 pmm_blocks_free(void)
 {
-	dbgprintf("Blocks free: %d\n", BITMAP_MAX * BITS - blocks_used);
+	dbgprintf("PMM: Blocks free: %d\n", BITMAP_MAX * BITS - blocks_used);
 	return BITMAP_MAX * BITS - blocks_used;
 }
 
