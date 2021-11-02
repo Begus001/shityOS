@@ -5,7 +5,9 @@
 #include <boot/multiboot.h>
 #include <stddef.h>
 
-void pmm_init(void *);
+void pmm_test(void *addr);
+
+void pmm_init(void *info_struct);
 
 void pmm_memmap(void);
 u32 pmm_blocks_used(void);
