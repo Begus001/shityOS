@@ -27,11 +27,6 @@ _Noreturn void init(multiboot_info_t *mb_info)
 	
 	intr_enable();
 	
-	u32 heap_start = (u32) (&kernel_end + 0x1000) & ~0xFF;
-	u32 heap_index_start = heap_start + 0x1000;
-	
-	dbgprintf("MAIN: kernel_start, _end: %x, %x\n", (u32) &kernel_start, (u32) &kernel_end);
-	
 	vmm_print_kernel_dir();
 	vmm_print_table_kernel_dir(768);
 	
