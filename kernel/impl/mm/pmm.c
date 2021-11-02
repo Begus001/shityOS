@@ -40,6 +40,12 @@ static inline void mark_used(void *addr)
 	blocks_used++;
 }
 
+void pmm_test(void *addr)
+{
+	uptr index = (uptr) addr / BLOCK_SIZE;
+	dbgprintf("PMM: test %x: %d\n", (u32) addr, (bitmap[index / BITS] >> (index % BITS)) & 1);
+}
+
 void pmm_init(void *info_struct)
 {
 	memset(bitmap, (char) 0xFF, sizeof(u32) * BITMAP_MAX);  // Mark all used
@@ -67,8 +73,8 @@ void pmm_init(void *info_struct)
 		mb_mmap++;
 	}
 	
-	uptr addr = (uptr) &kernel_start;
-	uptr end_addr = (uptr) &kernel_end;
+	uptr addr = (uptr) &kernel_start - KERNEL_VIRT_BASE;
+	uptr end_addr = (uptr) &kernel_end - KERNEL_VIRT_BASE;
 	dbgprintf("PMM: Kernel size: %x (%d)\n", (u32) &kernel_end - (u32) &kernel_start,
 	          (u32) &kernel_end - (u32) &kernel_start);
 	while (addr < end_addr) {  // Mark kernel used again
@@ -76,7 +82,7 @@ void pmm_init(void *info_struct)
 		addr += BLOCK_SIZE;
 	}
 	
-	mark_free((void *) &kernel_page_table_zero);
+//	mark_free((void *) &kernel_page_table_zero);
 	mark_used((void *) 0);
 }
 
