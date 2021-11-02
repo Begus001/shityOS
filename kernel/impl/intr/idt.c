@@ -54,7 +54,6 @@ struct idt_entry {
 } __attribute__((packed));
 
 struct idt_entry idt[IDT_MAX];
-u64 idt2[IDT_MAX];
 
 struct idt_pointer {
 	u16 size;
