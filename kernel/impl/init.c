@@ -36,6 +36,14 @@ _Noreturn void init(multiboot_info_t *mb_info)
 	heap_t *heap = heap_create((void *) heap_addr, (void *) mem_addr, mem_size, (void *) index_addr,
 	                           index_size, false);
 	
+	u32 *lol = heap_alloc(heap, sizeof(u32));
+	*lol = 0xDEADBABE;
+	
+	multiboot_info_t *test = heap_alloc(heap, sizeof(multiboot_info_t));
+	test->boot_device = 12345;
+	
+	dbgprintf("%x %d\n", *lol, test->boot_device);
+	
 //	vmm_print_kernel_dir();
 //	vmm_print_table_kernel_dir(768);
 	
