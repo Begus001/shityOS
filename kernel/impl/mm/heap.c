@@ -42,7 +42,7 @@ void *heap_alloc(heap_t *heap, size_t size)
 		if (!current_item->occupied && size <= current_item->size)
 			break;
 		current_item = current_item->next;
-	} while (current_item != NULL);
+	} while (current_item);
 	
 	if (!current_item)
 		return NULL;
@@ -59,4 +59,72 @@ void *heap_alloc(heap_t *heap, size_t size)
 	current_item->next = next_item;
 	
 	return current_item->addr;
+}
+
+int heap_index_merge(heap_t *heap)
+{
+	if (!heap)
+		return 0;
+	
+	int i = 0;
+	
+	heap_index_item_t *current_item = heap->index;
+	
+	while (current_item->next) {
+		if (!current_item->occupied && !current_item->next->occupied) {
+			current_item->size += current_item->next->size;
+			current_item->next = current_item->next->next;
+			i++;
+		} else {
+			current_item = current_item->next;
+		}
+	}
+	
+	return i;
+}
+
+void heap_free(heap_t *heap, void *addr)
+{
+	if (!heap || (u32) addr < (u32) heap->index->addr ||
+	    (u32) addr > ((u32) heap->index->addr + (u32) heap->index_size))
+		return;
+	
+	heap_index_item_t *current_item = heap->index;
+	
+	do {
+		if (current_item->addr == addr && current_item->occupied)
+			break;
+		
+		current_item = current_item->next;
+	} while (current_item);
+	
+	if (!current_item)
+		return;
+	
+	current_item->occupied = false;
+	
+	heap_index_merge(heap);
+}
+
+void heap_index_print(heap_t *heap)
+{
+	if (!heap)
+		return;
+	
+	int i = 0;
+	
+	dbgprintf("HEAP: Index Printout:\n");
+	
+	heap_index_item_t *current_item = heap->index;
+	do {
+		dbgprintf("HEAP: Index %d\n", i);
+		dbgprintf("HEAP:   addr: %x\n", current_item->addr);
+		dbgprintf("HEAP:   occu: %d\n", current_item->occupied);
+		dbgprintf("HEAP:   size: %d(%x)\n", current_item->size, current_item->size);
+		dbgprintf("HEAP:   next: %x\n", current_item->next);
+		
+		i++;
+		current_item = current_item->next;
+	} while(current_item);
+	dbgprintf("\n");
 }

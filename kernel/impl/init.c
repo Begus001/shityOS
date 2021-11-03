@@ -44,6 +44,12 @@ _Noreturn void init(multiboot_info_t *mb_info)
 	
 	dbgprintf("%x %d\n", *lol, test->boot_device);
 	
+	heap_index_print(heap);
+	
+	heap_free(heap, test);
+	
+	heap_index_print(heap);
+
 //	vmm_print_kernel_dir();
 //	vmm_print_table_kernel_dir(768);
 	

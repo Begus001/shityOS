@@ -25,5 +25,9 @@ heap_create(void *addr, void *heap_addr, size_t size, heap_index_item_t *index, 
             bool user);
 
 void *heap_alloc(heap_t *heap, size_t size);
+int heap_index_merge(heap_t *heap);
+void heap_free(heap_t *heap, void *addr);
+
+void heap_index_print(heap_t *heap);
 
 #endif
