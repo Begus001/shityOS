@@ -140,9 +140,8 @@ void *vmm_alloc_size_at(void *vaddr, bool user, size_t size)
 	if (size <= 0x1000)
 		return vmm_alloc_at(vaddr, user);
 	
-	void *start_addr = vmm_alloc_at(vaddr, user);
-	void *current_addr = start_addr + 0x1000;
-	size -= 0x1000;
+	void *start_addr = vaddr;
+	void *current_addr = vaddr;
 	
 	while (size > 0) {
 		vmm_alloc_at(current_addr, user);
@@ -198,8 +197,6 @@ void vmm_print_table_kernel_dir(unsigned int num)
 bool vmm_init(void)
 {
 	kernel_dir = &kernel_page_dir;
-	
-	dbgprintf("VMM: kernel_dir: %x\n", (u32) &kernel_page_dir);
 	
 	current_dir = kernel_dir;
 	
