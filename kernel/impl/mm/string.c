@@ -16,7 +16,7 @@ void *memmove(void *dest, const void *src, size_t n)
 {
 	char *d = (char *) dest;
 	
-	char buf[4096];
+	char *buf = kmalloc(n);
 	memcpy(buf, src, n);
 	
 	char *tmp = buf;
@@ -25,8 +25,9 @@ void *memmove(void *dest, const void *src, size_t n)
 		*d++ = *tmp++;
 	}
 	
+	kfree(buf);
+	
 	return dest;
-	// FIXME: Malloc buf when heap is available
 }
 
 void *memset(void *dest, char c, size_t n)

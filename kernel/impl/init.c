@@ -25,34 +25,10 @@ _Noreturn void init(multiboot_info_t *mb_info)
 	
 	vmm_init();
 	
+	heap_init_kheap();
+	
 	intr_enable();
-	
-	u32 heap_addr = (u32) &kernel_end;
-	u32 index_addr = heap_addr + 0x1000;
-	size_t index_size = 0x1000000;
-	u32 mem_addr = (index_addr + index_size + 0x1000) & ~0xFF;
-	size_t mem_size = 0x1000000;
 
-	heap_t *heap = heap_create((void *) heap_addr, (void *) mem_addr, mem_size, (void *) index_addr,
-	                           index_size, false);
-	
-	u32 *lol = heap_alloc(heap, sizeof(u32));
-	*lol = 0xDEADBABE;
-	
-	multiboot_info_t *test = heap_alloc(heap, sizeof(multiboot_info_t));
-	test->boot_device = 12345;
-	
-	dbgprintf("%x %d\n", *lol, test->boot_device);
-	
-	heap_index_print(heap);
-	
-	heap_free(heap, test);
-	
-	heap_index_print(heap);
-
-//	vmm_print_kernel_dir();
-//	vmm_print_table_kernel_dir(768);
-	
 	kprintf("Welcome to shityOS, the shittiest OS in the world!\n");
 	dbgprintf("Welcome to shityOS, the shittiest OS in the world!\n");
 	

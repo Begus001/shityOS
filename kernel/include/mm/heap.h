@@ -5,6 +5,8 @@
 #include <stdbool.h>
 #include <def/int.h>
 
+extern const void kernel_end;
+
 typedef struct heap_index_item heap_index_item_t;
 
 typedef struct {
@@ -20,6 +22,8 @@ struct heap_index_item {
 	heap_index_item_t *next;
 };
 
+heap_t *kheap;
+
 heap_t *
 heap_create(void *addr, void *heap_addr, size_t size, heap_index_item_t *index, u32 index_size,
             bool user);
@@ -29,5 +33,7 @@ int heap_index_merge(heap_t *heap);
 void heap_free(heap_t *heap, void *addr);
 
 void heap_index_print(heap_t *heap);
+
+void heap_init_kheap(void);
 
 #endif

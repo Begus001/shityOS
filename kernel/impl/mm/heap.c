@@ -4,6 +4,12 @@
 
 #include <mm/heap.h>
 
+const u32 heap_addr = (u32) &kernel_end;
+const u32 heap_index_addr = heap_addr + 0x1000;
+const size_t heap_index_size = 0x1000000;
+const u32 heap_mem_addr = heap_index_addr + heap_index_size + 0x1000;
+const size_t heap_mem_size = 0x1000000;
+
 heap_t *
 heap_create(void *addr, void *heap_addr, size_t size, heap_index_item_t *index, u32 index_size,
             bool user)
@@ -125,6 +131,22 @@ void heap_index_print(heap_t *heap)
 		
 		i++;
 		current_item = current_item->next;
-	} while(current_item);
+	} while (current_item);
 	dbgprintf("\n");
+}
+
+void heap_init_kheap(void)
+{
+	kheap = heap_create((void *) heap_addr, (void *) heap_mem_addr, heap_mem_size,
+	                    (void *) heap_index_addr, heap_index_size, false);
+}
+
+void *kmalloc(size_t size)
+{
+	return heap_alloc(kheap, size);
+}
+
+void kfree(void *addr)
+{
+	heap_free(kheap, addr);
 }
