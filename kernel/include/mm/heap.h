@@ -10,6 +10,8 @@ extern const void kernel_end;
 typedef struct heap_index_item heap_index_item_t;
 
 typedef struct {
+	u32 *index_bitmap;
+	size_t index_bitmap_size;
 	heap_index_item_t *index;
 	size_t index_size;
 	size_t size;
@@ -24,10 +26,8 @@ struct heap_index_item {
 
 heap_t *kheap;
 
-heap_t *
-heap_create(void *addr, void *heap_addr, size_t size, heap_index_item_t *index, u32 index_size,
-            bool user);
-
+heap_t *heap_create(void *addr, void *mem_addr, size_t size, heap_index_item_t *index,
+                    u32 *index_bitmap, u32 index_size, bool user);
 void *heap_alloc(heap_t *heap, size_t size);
 int heap_index_merge(heap_t *heap);
 void heap_free(heap_t *heap, void *addr);
