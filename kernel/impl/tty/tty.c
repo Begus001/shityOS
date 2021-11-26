@@ -1,7 +1,7 @@
 #include <def/int.h>
 #include <def/kernel.h>
 #include <mm/mem.h>
-#include <tty/serial.h>
+#include <io/serial.h>
 #include <tty/tty.h>
 
 #include "tty/vga_text.h"

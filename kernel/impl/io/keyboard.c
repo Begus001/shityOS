@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <io/keyboard.h>
 #include <tty/tty.h>
-#include <tty/serial.h>
+#include <io/serial.h>
 
 #define IO_BUF_ADDR 0x60
 #define STAT_ADDR 0x64

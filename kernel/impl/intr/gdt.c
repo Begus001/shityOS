@@ -1,8 +1,8 @@
 #include <def/int.h>
-#include <tty/serial.h>
+#include <io/serial.h>
 #include <stdbool.h>
 
-#include "gdt.h"
+#include "intr/gdt.h"
 
 #define GDT_TYPE_READ_WRITE 0x02     //  code segment: read, data segment: write
 #define GDT_TYPE_DIRECTION  0x04      /*  code segment: 1: can be executed by lower dpl, 0: can only

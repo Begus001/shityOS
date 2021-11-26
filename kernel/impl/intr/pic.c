@@ -1,4 +1,4 @@
-#include <tty/serial.h>
+#include <io/serial.h>
 
 #include "intr/pic.h"
 

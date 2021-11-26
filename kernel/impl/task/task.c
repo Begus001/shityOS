@@ -1,6 +1,6 @@
 #include <stddef.h>
 
-#include "intr/task.h"
+#include "task/task.h"
 
 static task_t *root_task = NULL;
 

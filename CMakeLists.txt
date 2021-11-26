@@ -25,11 +25,11 @@ set(KERNEL_C_FLAGS -ffreestanding -O0 -Wall -Wextra -nostdlib -masm=intel -std=g
 set(KERNEL_LD_FLAGS -T${KERNEL_LINKER} -ffreestanding -O0 -nostdlib -lgcc -ggdb)
 
 add_executable(${KERNEL_ELF}
-		kernel/impl/init.c
+		kernel/impl/boot/init.c
 		kernel/impl/mm/string.c
 		kernel/impl/boot/boot.asm
-		kernel/impl/tty/serial.c
-		kernel/impl/gdt.c
+		kernel/impl/io/serial.c
+		kernel/impl/intr/gdt.c
 		kernel/impl/tty/tty.c
 		kernel/impl/intr/idt.c
 		kernel/impl/intr/pic.c
@@ -39,6 +39,7 @@ add_executable(${KERNEL_ELF}
 		kernel/impl/mm/vmm.c
 		kernel/impl/mm/heap.c
 		kernel/impl/io/keyboard.c
+		kernel/impl/task/task.c
 		)
 
 target_compile_options(${KERNEL_ELF} PRIVATE

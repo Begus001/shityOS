@@ -2,9 +2,9 @@
 #include <stdbool.h>
 #include "intr/pic.h"
 #include <tty/tty.h>
-#include <tty/serial.h>
-#include <gdt.h>
-#include "intr/task.h"
+#include <io/serial.h>
+#include <intr/gdt.h>
+#include "task/task.h"
 #include "intr/pit.h"
 
 #include <intr/intr.h>

@@ -4,8 +4,8 @@
 #include <mm/vmm.h>
 #include <mm/heap.h>
 #include <tty/tty.h>
-#include <tty/serial.h>
-#include <gdt.h>
+#include <io/serial.h>
+#include <intr/gdt.h>
 #include <intr/intr.h>
 #include <boot/multiboot.h>
 #include <io/keyboard.h>

@@ -1,5 +1,5 @@
 #include <stdbool.h>
-#include <tty/serial.h>
+#include <io/serial.h>
 #include <tty/tty.h>
 #include <mm/mem.h>
 #include <def/kernel.h>

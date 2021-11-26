@@ -1,6 +1,6 @@
 #include <tty/tty.h>
-#include <tty/serial.h>
-#include <intr/task.h>
+#include <io/serial.h>
+#include <task/task.h>
 #include <io/keyboard.h>
 
 #include <intr/intr.h>

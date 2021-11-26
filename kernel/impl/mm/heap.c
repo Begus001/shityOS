@@ -1,6 +1,6 @@
 #include <mm/vmm.h>
 #include <mm/mem.h>
-#include <tty/serial.h>
+#include <io/serial.h>
 
 #include <mm/heap.h>
 
