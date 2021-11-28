@@ -1,6 +1,8 @@
 #include <mm/mem.h>
 #include <mm/pmm.h>
 #include <io/serial.h>
+#include <def/err.h>
+#include <def/kernel.h>
 
 #include <mm/vmm.h>
 
@@ -14,7 +16,7 @@
 #define ADD_12_LSB(x)       ((x) << 12)
 
 extern page_directory_t kernel_page_dir;
-extern const void       kernel_end;
+extern const void kernel_end;
 
 static page_directory_t *current_dir = NULL;
 static page_directory_t *kernel_dir;
@@ -53,18 +55,6 @@ static inline page_table_t *create_table(void)
 	return table;
 }
 
-page_directory_t *vmm_create_directory(void)
-{
-	page_directory_t *dir = pmm_alloc_block();
-	if (!dir)
-		return NULL;
-	memset(dir, 0, sizeof(page_directory_t));
-	dir->entries[1023].present         = true;
-	dir->entries[1023].writable        = true;
-	dir->entries[1023].page_table_addr = STRIP_12_LSB((u32) dir);
-	return dir;
-}
-
 bool vmm_map_page_current(void *paddr, void *vaddr, bool user)
 {
 	return vmm_map_page(current_dir, paddr, vaddr, user);
@@ -87,17 +77,17 @@ bool vmm_map_page(page_directory_t *dir, void *paddr, void *vaddr, bool user)
 		if (!table_phys_addr)
 			return false;
 		
-		dir_entry->present         = true;
-		dir_entry->writable        = true;
-		dir_entry->user_access     = true;
+		dir_entry->present = true;
+		dir_entry->writable = true;
+		dir_entry->user_access = true;
 		dir_entry->page_table_addr = STRIP_12_LSB((u32) table_phys_addr);
 	}
 	
 	page_table_entry_t *table_entry = pte_from_virt_addr(table, vaddr);
-	table_entry->present     = true;
-	table_entry->writable    = true;
+	table_entry->present = true;
+	table_entry->writable = true;
 	table_entry->user_access = user;
-	table_entry->page_addr   = STRIP_12_LSB((u32) paddr);
+	table_entry->page_addr = STRIP_12_LSB((u32) paddr);
 	
 	inval_tlb_entry(vaddr);
 	
@@ -122,47 +112,90 @@ void vmm_activate_paging(void)
 	:);
 }
 
-void *vmm_alloc_at(void *vaddr, bool user)
+void *vmm_alloc_at_ret_phys(void *vaddr, bool user)
 {
 	void *paddr = pmm_alloc_block();
 	if (!paddr)
 		return NULL;
 	if (!vmm_map_page_current(paddr, vaddr, user))
 		return NULL;
-	return vaddr;
+	return paddr;
 }
 
-void *vmm_alloc_size_at(void *vaddr, bool user, size_t size)
+void *vmm_alloc_size_at_ret_phys(void *vaddr, bool user, size_t size)
 {
 	if (size % 0x1000 || (u32) vaddr % 0x1000)
 		return NULL;
 	
 	if (size <= 0x1000)
-		return vmm_alloc_at(vaddr, user);
+		return vmm_alloc_at_ret_phys(vaddr, user);
 	
-	void *start_addr   = vaddr;
 	void *current_addr = vaddr;
 	
 	while (size > 0) {
-		vmm_alloc_at(current_addr, user);
+		vmm_alloc_at_ret_phys(current_addr, user);
 		current_addr += 0x1000;
 		size -= 0x1000;
 	}
-	
-	return start_addr;
+	return vmm_alloc_at_ret_phys(vaddr, user);
+}
+
+void *vmm_alloc_at(void *vaddr, bool user)
+{
+	vmm_alloc_at_ret_phys(vaddr, user);
+	return vaddr;
+}
+
+void *vmm_alloc_size_at(void *vaddr, bool user, size_t size)
+{
+	vmm_alloc_size_at_ret_phys(vaddr, user, size);
+	return vaddr;
+}
+
+bool vmm_unmap(void *vaddr)
+{
+	if (!current_dir)
+		return false;
+	page_table_t *table = pt_from_virt_addr_recursive(vaddr);
+	table->entries[PAGE_TABLE_INDEX((u32) vaddr)].present = false;
+	table->entries[PAGE_TABLE_INDEX((u32) vaddr)].writable = false;
+	table->entries[PAGE_TABLE_INDEX((u32) vaddr)].page_addr = 0;
+	return true;
 }
 
 bool vmm_free(void *vaddr)
 {
 	if (!current_dir)
 		return false;
-	page_table_t       *table       = pt_from_virt_addr_recursive(vaddr);
+	page_table_t *table = pt_from_virt_addr_recursive(vaddr);
 	page_table_entry_t *table_entry = pte_from_virt_addr(table, vaddr);
 	pmm_free_block((void *) ADD_12_LSB((table_entry->page_addr)));
-	table_entry->present   = false;
-	table_entry->writable  = false;
+	table_entry->present = false;
+	table_entry->writable = false;
 	table_entry->page_addr = 0;
 	return true;
+}
+
+void *vmm_create_directory(void)
+{
+	void *paddr = vmm_alloc_at_ret_phys((void *) EXTRA_MEM, false);
+	page_directory_t *dir = (void *) EXTRA_MEM;
+	memset(dir, 0, sizeof(page_directory_t));
+	
+	dir->entries[1023].present = true;
+	dir->entries[1023].writable = true;
+	dir->entries[1023].page_table_addr = STRIP_12_LSB((u32) paddr);
+	
+	for (u32 i = PAGE_DIR_INDEX(KERNEL_VIRT_BASE); i < 1023; i++) {
+		if (kernel_dir->entries[i].present) {
+			dir->entries[i].present = true;
+			dir->entries[i].writable = true;
+			dir->entries[i].page_table_addr = kernel_dir->entries[i].page_table_addr;
+		}
+	}
+	
+	vmm_unmap(dir);
+	return paddr;
 }
 
 void vmm_print_kernel_dir(void)
