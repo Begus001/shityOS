@@ -3,7 +3,7 @@
 
 void *memcpy(void *dest, const void *src, size_t n)
 {
-	char       *d = (char *) dest;
+	char *d = (char *) dest;
 	const char *s = (char *) src;
 	
 	while (n--)
@@ -72,8 +72,8 @@ char *strcpy(char *dest, const char *src)
 
 char *strcat(char *dest, const char *src)
 {
-	size_t n  = strlen(src);
-	char   *p = dest + strlen(dest);
+	size_t n = strlen(src);
+	char *p = dest + strlen(dest);
 	
 	while (n--) {
 		*p++ = *src++;

@@ -27,10 +27,10 @@ _Noreturn void init(multiboot_info_t *mb_info)
 	
 	heap_init_kheap();
 	
-	intr_enable();
-	
 	kprintf("Welcome to shityOS, the shittiest OS in the world!\n");
 	dbgprintf("Welcome to shityOS, the shittiest OS in the world!\n");
+	
+	intr_enable();
 	
 	while (1);
 }

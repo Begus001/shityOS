@@ -12,7 +12,7 @@ _Noreturn static inline void err_halt(char *msg)
 	__asm__ __volatile__("int 0");
 }
 
-_Noreturn static inline void err_no_reach(void)
+_Noreturn static inline void err_unreachable(void)
 {
 	err_halt("Unreachable code reached\n");
 }

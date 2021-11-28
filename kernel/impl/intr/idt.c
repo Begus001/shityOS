@@ -44,21 +44,21 @@ extern void keyboard_handler(void);
 
 struct idt_entry
 {
-	u16          offset_lo;
-	u16          cs_selector;
-	u8           zero;
+	u16 offset_lo;
+	u16 cs_selector;
+	u8 zero;
 	unsigned int gate_type: 4;
 	bool is_storage_segment: 1;
 	unsigned int dpl: 2;
 	bool present: 1;
-	u16          offset_hi;
+	u16 offset_hi;
 } __attribute__((packed));
 
-struct idt_entry          idt[IDT_MAX];
+struct idt_entry idt[IDT_MAX];
 
 struct idt_pointer
 {
-	u16  size;
+	u16 size;
 	void *offset;
 } __attribute__((packed)) p_idt = {.size = IDT_MAX * sizeof(struct idt_entry) - 1, .offset = idt,};
 
@@ -67,14 +67,14 @@ set_entry(u8 i, void (*offset)(), u16 cs_selector, u8 gate_type, bool is_storage
           bool present)
 {
 	u32 handler = (u32) offset;
-	idt[i].offset_lo          = handler & 0xFFFF;
-	idt[i].cs_selector        = cs_selector;
-	idt[i].zero               = 0x0;
-	idt[i].gate_type          = gate_type & 0xF;
+	idt[i].offset_lo = handler & 0xFFFF;
+	idt[i].cs_selector = cs_selector;
+	idt[i].zero = 0x0;
+	idt[i].gate_type = gate_type & 0xF;
 	idt[i].is_storage_segment = is_storage_segment & 0x1;
-	idt[i].dpl                = dpl & 0x3;
-	idt[i].present            = present & 0x1;
-	idt[i].offset_hi          = (handler >> 16) & 0xFFFF;
+	idt[i].dpl = dpl & 0x3;
+	idt[i].present = present & 0x1;
+	idt[i].offset_hi = (handler >> 16) & 0xFFFF;
 }
 
 static void populate(void)

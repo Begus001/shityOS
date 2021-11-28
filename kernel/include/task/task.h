@@ -25,10 +25,10 @@ typedef struct
 
 typedef struct task
 {
-	context_t   context;
+	context_t context;
 	struct task *next;
 	struct task *prev;
-}                          task_t;
+} task_t;
 
 void task_init(void);
 

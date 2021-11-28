@@ -15,7 +15,7 @@ static u32 blocks_used = BITMAP_MAX * BITS;
 
 extern const void kernel_start;
 extern const void kernel_end;
-extern u32        kernel_page_table_zero;
+extern u32 kernel_page_table_zero;
 
 static inline bool test_bit(size_t bit)
 {
@@ -57,12 +57,12 @@ void pmm_init(void *info_struct)
 		__asm__ volatile("cli;hlt");
 	}
 	
-	multiboot_mmap_t *mb_mmap     = (multiboot_mmap_t *) (mb_info->mmap_addr + KERNEL_VIRT_BASE);
+	multiboot_mmap_t *mb_mmap = (multiboot_mmap_t *) (mb_info->mmap_addr + KERNEL_VIRT_BASE);
 	multiboot_mmap_t *mb_mmap_end = (void *) ((uptr) mb_mmap + mb_info->mmap_length);
 	
 	while (mb_mmap < mb_mmap_end) {
 		if (mb_mmap->type == 1) {  // Mark memory free
-			uptr addr     = (uptr) mb_mmap->base_addr;
+			uptr addr = (uptr) mb_mmap->base_addr;
 			uptr end_addr = (uptr) addr + mb_mmap->length;
 			
 			while (addr < end_addr) {
@@ -73,7 +73,7 @@ void pmm_init(void *info_struct)
 		mb_mmap++;
 	}
 	
-	uptr addr     = (uptr) &kernel_start - KERNEL_VIRT_BASE;
+	uptr addr = (uptr) &kernel_start - KERNEL_VIRT_BASE;
 	uptr end_addr = (uptr) &kernel_end - KERNEL_VIRT_BASE;
 	dbgprintf("PMM: Kernel size: %x (%d)\n", (u32) &kernel_end - (u32) &kernel_start,
 	          (u32) &kernel_end - (u32) &kernel_start);
@@ -89,7 +89,7 @@ void pmm_init(void *info_struct)
 void pmm_memmap(void)
 {
 	size_t used = 0, free = 0, stretch_start = 0, stretch_end, stretch_count = 0;
-	bool   stretch_used;
+	bool stretch_used;
 	
 	dbgprintf("PMM: Memory map:\n");
 	
@@ -103,7 +103,7 @@ void pmm_memmap(void)
 			stretch_end = i - 1;
 			dbgprintf("PMM: Stretch %d: blocks %d to %d %s (%d)\n", stretch_count++, stretch_start,
 			          stretch_end, stretch_used ? "used" : "free", stretch_end - stretch_start + 1);
-			stretch_used  = !stretch_used;
+			stretch_used = !stretch_used;
 			stretch_start = stretch_end + 1;
 		}
 		
@@ -135,12 +135,12 @@ u32 pmm_blocks_free(void)
 void *pmm_alloc(size_t size)
 {
 	size_t stretch_start, stretch_end;
-	bool   counting = false;
+	bool counting = false;
 	
 	for (size_t i = 0; i < BITMAP_MAX * BITS; i++) {
 		if (!test_bit(i) && !counting) {
 			stretch_start = i;
-			counting      = true;
+			counting = true;
 		} else if (test_bit(i) && counting) {
 			stretch_end = i - 1;
 			if ((stretch_end - stretch_start + 1) * BLOCK_SIZE >= size) {

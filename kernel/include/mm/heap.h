@@ -11,18 +11,18 @@ typedef struct heap_index_item heap_index_item_t;
 
 typedef struct
 {
-	u32               *index_bitmap;
-	size_t            index_bitmap_size;
+	u32 *index_bitmap;
+	size_t index_bitmap_size;
 	heap_index_item_t *index;
-	size_t            index_size;
-	size_t            size;
-}                              heap_t;
+	size_t index_size;
+	size_t size;
+} heap_t;
 
 struct heap_index_item
 {
-	void              *addr;
+	void *addr;
 	bool occupied;
-	size_t            size;
+	size_t size;
 	heap_index_item_t *next;
 };
 

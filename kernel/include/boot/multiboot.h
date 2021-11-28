@@ -30,9 +30,9 @@ typedef struct
 	u32 mods_addr;
 	union
 	{
-		multiboot_aout_symbol_table_t        aout_sym;
+		multiboot_aout_symbol_table_t aout_sym;
 		multiboot_elf_section_header_table_t elf_sec;
-	}   u;
+	} u;
 	u32 mmap_length;
 	u32 mmap_addr;
 	u32 drives_length;
@@ -50,8 +50,8 @@ typedef struct
 	u32 framebuffer_pitch;
 	u32 framebuffer_width;
 	u32 framebuffer_height;
-	u8  framebuffer_bpp;
-	u8  framebuffer_type;
+	u8 framebuffer_bpp;
+	u8 framebuffer_type;
 	union
 	{
 		struct
