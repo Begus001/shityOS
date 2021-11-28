@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16.3)
 
 set(CMAKE_ASM_NASM_OBJECT_FORMAT elf)
 set(CMAKE_C_COMPILER_WORKS TRUE)
-#set(CMAKE_C_COMPILER "$ENV{HOME}/os/gcc-cross-i686/bin/i686-elf-gcc")
+set(CMAKE_C_COMPILER "$ENV{HOME}/opt/gcc-cross-i686/bin/i686-elf-gcc")
 
 set(CMAKE_BUILD_TYPE Debug)
 
@@ -40,6 +40,7 @@ add_executable(${KERNEL_ELF}
 		kernel/impl/mm/heap.c
 		kernel/impl/io/keyboard.c
 		kernel/impl/task/task.c
+		kernel/include/def/err.h
 		)
 
 target_compile_options(${KERNEL_ELF} PRIVATE
@@ -52,19 +53,4 @@ target_link_options(${KERNEL_ELF} PRIVATE
 
 target_include_directories(${KERNEL_ELF} PRIVATE
 		kernel/include
-		)
-
-add_custom_target(run
-		DEPENDS ${KERNEL_ELF}
-		COMMENT "Running kernel..."
-		COMMAND qemu-system-i386 -kernel ${KERNEL_ELF}
-		USES_TERMINAL
-		)
-
-add_custom_target(debug
-		DEPENDS ${KERNEL_ELF}
-		COMMENT "Running kernel in debug mode..."
-		COMMAND gnome-terminal -- gdb
-		COMMAND qemu-system-i386 -kernel ${KERNEL_ELF} -s -S
-		USES_TERMINAL
 		)
