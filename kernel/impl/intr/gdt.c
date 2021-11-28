@@ -14,10 +14,11 @@
 
 #define GDT_MAX 5
 
-struct gdt_entry {
-	u16 limit_lo;
-	u16 base_lo;
-	u8 base_hi;
+struct gdt_entry
+{
+	u16          limit_lo;
+	u16          base_lo;
+	u8           base_hi;
 	unsigned int type: 4;
 	bool segment: 1;
 	unsigned int dpl: 2;
@@ -27,35 +28,34 @@ struct gdt_entry {
 	bool long_mode: 1;
 	bool protected_mode: 1;
 	bool granularity: 1;
-	u8 base_hi2;
+	u8           base_hi2;
 } __attribute__((packed));
 
-struct gdt_entry gdt[GDT_MAX];
+struct gdt_entry          gdt[GDT_MAX];
 
-struct gdt_pointer {
-	u16 size;
-	void *offset;
-} __attribute__((packed)) p_gdt = {
-		.size = GDT_MAX * sizeof(struct gdt_entry) - 1,
-		.offset = gdt,
-};
-
-static void set_entry(u8 i, u32 base, u32 limit, u8 type, bool not_tss, u8 ring, bool present,
-                      bool available, bool long_mode, bool protected_mode, bool granularity_4K)
+struct gdt_pointer
 {
-	gdt[i].limit_lo = limit & 0xFFFF;
-	gdt[i].base_lo = base & 0xFFFF;
-	gdt[i].base_hi = (base >> 16) & 0xFF;
-	gdt[i].type = type & 0xF;
-	gdt[i].segment = not_tss & 0x1;
-	gdt[i].dpl = ring & 0x3;
-	gdt[i].present = present & 0x1;
-	gdt[i].limit_hi = (limit >> 16) & 0xF;
-	gdt[i].available = available & 0x1;
-	gdt[i].long_mode = long_mode & 0x1;
+	u16  size;
+	void *offset;
+} __attribute__((packed)) p_gdt = {.size = GDT_MAX * sizeof(struct gdt_entry) - 1, .offset = gdt,};
+
+static void
+set_entry(u8 i, u32 base, u32 limit, u8 type, bool not_tss, u8 ring, bool present, bool available,
+          bool long_mode, bool protected_mode, bool granularity_4K)
+{
+	gdt[i].limit_lo       = limit & 0xFFFF;
+	gdt[i].base_lo        = base & 0xFFFF;
+	gdt[i].base_hi        = (base >> 16) & 0xFF;
+	gdt[i].type           = type & 0xF;
+	gdt[i].segment        = not_tss & 0x1;
+	gdt[i].dpl            = ring & 0x3;
+	gdt[i].present        = present & 0x1;
+	gdt[i].limit_hi       = (limit >> 16) & 0xF;
+	gdt[i].available      = available & 0x1;
+	gdt[i].long_mode      = long_mode & 0x1;
 	gdt[i].protected_mode = protected_mode & 0x1;
-	gdt[i].granularity = granularity_4K & 0x1;
-	gdt[i].base_hi2 = (base >> 24) & 0xFF;
+	gdt[i].granularity    = granularity_4K & 0x1;
+	gdt[i].base_hi2       = (base >> 24) & 0xFF;
 }
 
 static void gdt_load()
@@ -76,14 +76,14 @@ static void gdt_load()
 void gdt_init()
 {
 	set_entry(0, 0, 0, 0, false, 0, false, false, false, false, false);
-	set_entry(1, 0, 0xFFFFF, GDT_TYPE_READ_WRITE | GDT_TYPE_IS_CODE_SEGMENT, true, RING0,
-	          true, true, false, true, true);
-	set_entry(2, 0, 0xFFFFF, GDT_TYPE_READ_WRITE | GDT_TYPE_IS_DATA_SEGMENT, true, RING0,
-	          true, true, false, true, true);
-	set_entry(3, 0, 0xFFFFF, GDT_TYPE_READ_WRITE | GDT_TYPE_IS_CODE_SEGMENT, true, RING3,
-	          true, true, false, true, true);
-	set_entry(4, 0, 0xFFFFF, GDT_TYPE_READ_WRITE | GDT_TYPE_IS_DATA_SEGMENT, true, RING3,
-	          true, true, false, true, true);
+	set_entry(1, 0, 0xFFFFF, GDT_TYPE_READ_WRITE | GDT_TYPE_IS_CODE_SEGMENT, true, RING0, true,
+	          true, false, true, true);
+	set_entry(2, 0, 0xFFFFF, GDT_TYPE_READ_WRITE | GDT_TYPE_IS_DATA_SEGMENT, true, RING0, true,
+	          true, false, true, true);
+	set_entry(3, 0, 0xFFFFF, GDT_TYPE_READ_WRITE | GDT_TYPE_IS_CODE_SEGMENT, true, RING3, true,
+	          true, false, true, true);
+	set_entry(4, 0, 0xFFFFF, GDT_TYPE_READ_WRITE | GDT_TYPE_IS_DATA_SEGMENT, true, RING3, true,
+	          true, false, true, true);
 	
 	gdt_load();
 }

@@ -14,7 +14,7 @@
 #define ADD_12_LSB(x)       ((x) << 12)
 
 extern page_directory_t kernel_page_dir;
-extern const void kernel_end;
+extern const void       kernel_end;
 
 static page_directory_t *current_dir = NULL;
 static page_directory_t *kernel_dir;
@@ -59,8 +59,8 @@ page_directory_t *vmm_create_directory(void)
 	if (!dir)
 		return NULL;
 	memset(dir, 0, sizeof(page_directory_t));
-	dir->entries[1023].present = true;
-	dir->entries[1023].writable = true;
+	dir->entries[1023].present         = true;
+	dir->entries[1023].writable        = true;
 	dir->entries[1023].page_table_addr = STRIP_12_LSB((u32) dir);
 	return dir;
 }
@@ -87,17 +87,17 @@ bool vmm_map_page(page_directory_t *dir, void *paddr, void *vaddr, bool user)
 		if (!table_phys_addr)
 			return false;
 		
-		dir_entry->present = true;
-		dir_entry->writable = true;
-		dir_entry->user_access = true;
+		dir_entry->present         = true;
+		dir_entry->writable        = true;
+		dir_entry->user_access     = true;
 		dir_entry->page_table_addr = STRIP_12_LSB((u32) table_phys_addr);
 	}
 	
 	page_table_entry_t *table_entry = pte_from_virt_addr(table, vaddr);
-	table_entry->present = true;
-	table_entry->writable = true;
+	table_entry->present     = true;
+	table_entry->writable    = true;
 	table_entry->user_access = user;
-	table_entry->page_addr = STRIP_12_LSB((u32) paddr);
+	table_entry->page_addr   = STRIP_12_LSB((u32) paddr);
 	
 	inval_tlb_entry(vaddr);
 	
@@ -140,7 +140,7 @@ void *vmm_alloc_size_at(void *vaddr, bool user, size_t size)
 	if (size <= 0x1000)
 		return vmm_alloc_at(vaddr, user);
 	
-	void *start_addr = vaddr;
+	void *start_addr   = vaddr;
 	void *current_addr = vaddr;
 	
 	while (size > 0) {
@@ -156,11 +156,11 @@ bool vmm_free(void *vaddr)
 {
 	if (!current_dir)
 		return false;
-	page_table_t *table = pt_from_virt_addr_recursive(vaddr);
+	page_table_t       *table       = pt_from_virt_addr_recursive(vaddr);
 	page_table_entry_t *table_entry = pte_from_virt_addr(table, vaddr);
 	pmm_free_block((void *) ADD_12_LSB((table_entry->page_addr)));
-	table_entry->present = false;
-	table_entry->writable = false;
+	table_entry->present   = false;
+	table_entry->writable  = false;
 	table_entry->page_addr = 0;
 	return true;
 }

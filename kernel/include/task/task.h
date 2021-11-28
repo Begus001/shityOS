@@ -3,7 +3,8 @@
 
 #include <def/int.h>
 
-typedef struct {
+typedef struct
+{
 	u32 eax;
 	u32 ebx;
 	u32 ecx;
@@ -22,11 +23,12 @@ typedef struct {
 	u32 ss;
 }  __attribute__((packed)) context_t;
 
-typedef struct task {
-	context_t context;
+typedef struct task
+{
+	context_t   context;
 	struct task *next;
 	struct task *prev;
-} task_t;
+}                          task_t;
 
 void task_init(void);
 

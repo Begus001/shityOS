@@ -20,7 +20,7 @@
 #define ICW4_BUF_MODE      0x08  // Sends signal to enable buffers when outputting to bus
 #define ICW4_NESTED_MODE   0x10  /*    Service requests from slaves whose interrupt requests are being
 										serviced at the moment */
-										
+
 void pic_init(void)
 {
 	// Master initialization
@@ -28,13 +28,13 @@ void pic_init(void)
 	out8(PIC_DAT_ADDR, IRQ0_7_POS);
 	out8(PIC_DAT_ADDR, ICW3_SLAVE_MASK);
 	out8(PIC_DAT_ADDR, ICW4_NO_MICRO_MODE | ICW4_SET_MASTER | ICW4_NESTED_MODE | ICW4_AUTO_EOI);
-
+	
 	// Slave initialization
 	out8(PIC_SL_CMD_ADDR, ICW1_READ_ICW4 | ICW1_INIT);
 	out8(PIC_SL_DAT_ADDR, IRQ8_15_POS);
 	out8(PIC_SL_DAT_ADDR, ICW3_MASTER_IRQ);
 	out8(PIC_SL_DAT_ADDR, ICW4_NO_MICRO_MODE | ICW4_NESTED_MODE | ICW4_AUTO_EOI);
-
+	
 	// Demask IRQ0, IRQ1
 	out8(PIC_DAT_ADDR, 0xFC);
 	out8(PIC_SL_DAT_ADDR, 0x0);

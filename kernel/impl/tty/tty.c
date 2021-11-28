@@ -8,11 +8,11 @@
 
 static u16 *vidmem = (u16 *) (0xB8000 + KERNEL_VIRT_BASE);
 
-static size_t MAX_COLS = 80, MAX_ROWS = 25;
+static size_t MAX_COLS  = 80, MAX_ROWS = 25;
 
 static size_t col, row;
-static u8 color;
-static int color_buf = -1;
+static u8     color;
+static int    color_buf = -1;
 
 void tty_init(void)
 {
@@ -50,7 +50,7 @@ void tty_set_color(enum color fg, enum color bg)
 void tty_set_color_tmp(enum color fg, enum color bg)
 {
 	color_buf = color;
-	color = vga_get_color(fg, bg);
+	color     = vga_get_color(fg, bg);
 }
 
 void tty_reset_color(void)
@@ -113,9 +113,9 @@ static size_t sputn(char *buf, size_t n, unsigned char base)
 	if (base > 16 || n > PUTN_MAX)
 		return 0;
 	
-	const char *digit_buf = "0123456789ABCDEF";
-	char strbuf[PUTN_BUF_MAX] = "";
-	char *p;
+	const char *digit_buf           = "0123456789ABCDEF";
+	char       strbuf[PUTN_BUF_MAX] = "";
+	char       *p;
 	
 	p = buf + PUTN_BUF_MAX - 1;
 	
@@ -145,8 +145,8 @@ size_t kvsprintf(char *buf, const char *fmt, va_list va)
 		return 0;
 	
 	const char *s;
-	char putn_buf[PUTN_BUF_MAX] = "";
-	size_t n;
+	char       putn_buf[PUTN_BUF_MAX] = "";
+	size_t     n;
 	
 	size_t char_count = 0;
 	
@@ -227,7 +227,7 @@ size_t kvsprintf(char *buf, const char *fmt, va_list va)
 
 size_t ksprintf(char *buf, const char *fmt, ...)
 {
-	size_t char_count;
+	size_t  char_count;
 	va_list va;
 	va_start(va, fmt);
 	char_count = kvsprintf(buf, fmt, va);
@@ -238,7 +238,7 @@ size_t ksprintf(char *buf, const char *fmt, ...)
 static size_t kvprintf(const char *fmt, va_list va)
 {
 	size_t char_count;
-	char buf[KPF_MAX] = "";
+	char   buf[KPF_MAX] = "";
 	char_count = kvsprintf(buf, fmt, va);
 	puts(buf);
 	return char_count;
@@ -246,7 +246,7 @@ static size_t kvprintf(const char *fmt, va_list va)
 
 size_t kprintf(const char *fmt, ...)
 {
-	size_t char_count;
+	size_t  char_count;
 	va_list va;
 	va_start(va, fmt);
 	char_count = kvprintf(fmt, va);

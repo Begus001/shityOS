@@ -42,40 +42,39 @@ extern void exc_com_0x1E(void);
 extern void clock_handler(void);
 extern void keyboard_handler(void);
 
-struct idt_entry {
-	u16 offset_lo;
-	u16 cs_selector;
-	u8 zero;
+struct idt_entry
+{
+	u16          offset_lo;
+	u16          cs_selector;
+	u8           zero;
 	unsigned int gate_type: 4;
 	bool is_storage_segment: 1;
 	unsigned int dpl: 2;
 	bool present: 1;
-	u16 offset_hi;
+	u16          offset_hi;
 } __attribute__((packed));
 
-struct idt_entry idt[IDT_MAX];
+struct idt_entry          idt[IDT_MAX];
 
-struct idt_pointer {
-	u16 size;
+struct idt_pointer
+{
+	u16  size;
 	void *offset;
-} __attribute__((packed)) p_idt = {
-		.size = IDT_MAX * sizeof(struct idt_entry) - 1,
-		.offset = idt,
-};
+} __attribute__((packed)) p_idt = {.size = IDT_MAX * sizeof(struct idt_entry) - 1, .offset = idt,};
 
 static void
 set_entry(u8 i, void (*offset)(), u16 cs_selector, u8 gate_type, bool is_storage_segment, u8 dpl,
           bool present)
 {
 	u32 handler = (u32) offset;
-	idt[i].offset_lo = handler & 0xFFFF;
-	idt[i].cs_selector = cs_selector;
-	idt[i].zero = 0x0;
-	idt[i].gate_type = gate_type & 0xF;
+	idt[i].offset_lo          = handler & 0xFFFF;
+	idt[i].cs_selector        = cs_selector;
+	idt[i].zero               = 0x0;
+	idt[i].gate_type          = gate_type & 0xF;
 	idt[i].is_storage_segment = is_storage_segment & 0x1;
-	idt[i].dpl = dpl & 0x3;
-	idt[i].present = present & 0x1;
-	idt[i].offset_hi = (handler >> 16) & 0xFFFF;
+	idt[i].dpl                = dpl & 0x3;
+	idt[i].present            = present & 0x1;
+	idt[i].offset_hi          = (handler >> 16) & 0xFFFF;
 }
 
 static void populate(void)
@@ -95,15 +94,15 @@ static void populate(void)
 	set_entry(0xC, exc_com_0xC, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
 	set_entry(0xD, exc_com_0xD, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
 	set_entry(0xE, exc_com_0xE, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
-
+	
 	set_entry(0x10, exc_com_0x10, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
 	set_entry(0x11, exc_com_0x11, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
 	set_entry(0x12, exc_com_0x12, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
 	set_entry(0x13, exc_com_0x13, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
 	set_entry(0x14, exc_com_0x14, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
-
+	
 	set_entry(0x1E, exc_com_0x1E, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
-
+	
 	set_entry(0x20, clock_handler, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
 	set_entry(0x21, keyboard_handler, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
 }
@@ -118,7 +117,7 @@ void intr_init(void)
 	pic_init();
 	pit_init();
 	pit_load_hz(2000);
-
+	
 	populate();
 	idt_load();
 }

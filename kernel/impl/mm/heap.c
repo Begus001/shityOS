@@ -4,13 +4,13 @@
 
 #include <mm/heap.h>
 
-const u32 heap_addr = (u32) &kernel_end;
-const u32 heap_index_bitmap = heap_addr + 0x1000;
-const size_t heap_index_size = 0x1000000;
+const u32    heap_addr              = (u32) &kernel_end;
+const u32    heap_index_bitmap      = heap_addr + 0x1000;
+const size_t heap_index_size        = 0x1000000;
 const size_t heap_index_bitmap_size = heap_index_size / sizeof(heap_index_item_t) / sizeof(u32);
-const u32 heap_index_addr = heap_index_bitmap + heap_index_bitmap_size + 0x1000;
-const u32 heap_mem_addr = heap_index_addr + heap_index_size + 0x1000;
-const size_t heap_mem_size = 0x1000000;
+const u32    heap_index_addr        = heap_index_bitmap + heap_index_bitmap_size + 0x1000;
+const u32    heap_mem_addr          = heap_index_addr + heap_index_size + 0x1000;
+const size_t heap_mem_size          = 0x1000000;
 
 heap_t *
 heap_create(void *addr, void *mem_addr, size_t size, heap_index_item_t *index, u32 *index_bitmap,
@@ -21,7 +21,7 @@ heap_create(void *addr, void *mem_addr, size_t size, heap_index_item_t *index, u
 	
 	size_t index_bitmap_size = index_size / sizeof(heap_index_item_t) / sizeof(u32);
 	
-	heap_t *heap = vmm_alloc_at(addr, user);
+	heap_t            *heap       = vmm_alloc_at(addr, user);
 	heap_index_item_t *index_head = vmm_alloc_size_at(index, user, index_size);
 	vmm_alloc_size_at(mem_addr, user, size);
 	vmm_alloc_size_at(index_bitmap, user, heap_index_bitmap_size);
@@ -32,16 +32,16 @@ heap_create(void *addr, void *mem_addr, size_t size, heap_index_item_t *index, u
 	memset(index_bitmap, 1, 1);
 	memset(index_bitmap + 1, 0, index_bitmap_size);
 	
-	heap->index = index;
-	heap->index_size = index_size;
-	heap->size = size;
-	heap->index_bitmap = index_bitmap;
+	heap->index             = index;
+	heap->index_size        = index_size;
+	heap->size              = size;
+	heap->index_bitmap      = index_bitmap;
 	heap->index_bitmap_size = index_bitmap_size;
 	
-	index_head->addr = mem_addr;
+	index_head->addr     = mem_addr;
 	index_head->occupied = false;
-	index_head->size = size;
-	index_head->next = NULL;
+	index_head->size     = size;
+	index_head->next     = NULL;
 	
 	return heap;
 }
@@ -65,8 +65,8 @@ static heap_index_item_t *find_free_index(heap_t *heap)
 
 static void remove_index_item(heap_t *heap, heap_index_item_t *item)
 {
-	u32 *bitmap = heap->index_bitmap;
-	size_t index = (size_t) (item - heap->index) / sizeof(heap_index_item_t);
+	u32    *bitmap = heap->index_bitmap;
+	size_t index   = (size_t) (item - heap->index) / sizeof(heap_index_item_t);
 	bitmap[index / 32] &= ~(1 << (index % sizeof(heap_index_item_t)));
 }
 
@@ -87,13 +87,13 @@ void *heap_alloc(heap_t *heap, size_t size)
 		return NULL;
 	
 	current_item->occupied = true;
-	current_item->size = size;
+	current_item->size     = size;
 	
 	heap_index_item_t *next_item = find_free_index(heap);
-	next_item->addr = current_item->addr + size;
+	next_item->addr     = current_item->addr + size;
 	next_item->occupied = false;
-	next_item->size = heap->index->addr + heap->size - next_item->addr;
-	next_item->next = NULL;
+	next_item->size     = heap->index->addr + heap->size - next_item->addr;
+	next_item->next     = NULL;
 	
 	current_item->next = next_item;
 	

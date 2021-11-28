@@ -19,7 +19,8 @@ typedef struct multiboot_elf_section_header_table
 	u32 shndx;
 } multiboot_elf_section_header_table_t;
 
-typedef struct {
+typedef struct
+{
 	u32 flags;
 	u32 mem_lower;
 	u32 mem_upper;
@@ -29,9 +30,9 @@ typedef struct {
 	u32 mods_addr;
 	union
 	{
-		multiboot_aout_symbol_table_t aout_sym;
+		multiboot_aout_symbol_table_t        aout_sym;
 		multiboot_elf_section_header_table_t elf_sec;
-	} u;
+	}   u;
 	u32 mmap_length;
 	u32 mmap_addr;
 	u32 drives_length;
@@ -49,14 +50,17 @@ typedef struct {
 	u32 framebuffer_pitch;
 	u32 framebuffer_width;
 	u32 framebuffer_height;
-	u8 framebuffer_bpp;
-	u8 framebuffer_type;
-	union {
-		struct {
+	u8  framebuffer_bpp;
+	u8  framebuffer_type;
+	union
+	{
+		struct
+		{
 			u32 framebuffer_palette_addr;
 			u16 framebuffer_palette_num_colors;
 		};
-		struct {
+		struct
+		{
 			u8 framebuffer_red_field_position;
 			u8 framebuffer_red_mask_size;
 			u8 framebuffer_green_field_position;
@@ -67,7 +71,8 @@ typedef struct {
 	};
 } multiboot_info_t;
 
-typedef struct {
+typedef struct
+{
 	u32 size;
 	u64 base_addr;
 	u64 length;
