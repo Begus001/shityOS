@@ -9,6 +9,8 @@
 #include <intr/intr.h>
 #include <boot/multiboot.h>
 #include <io/keyboard.h>
+#include <task/task.h>
+#include <def/err.h>
 
 extern const void kernel_end;
 extern const void kernel_start;
@@ -27,10 +29,9 @@ _Noreturn void init(multiboot_info_t *mb_info)
 	
 	heap_init_kheap();
 	
-	kprintf("Welcome to shityOS, the shittiest OS in the world!\n");
-	dbgprintf("Welcome to shityOS, the shittiest OS in the world!\n");
+	task_init();
 	
-	intr_enable();
+	err_unreachable();
 	
 	while (1);
 }

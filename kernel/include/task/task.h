@@ -2,6 +2,8 @@
 #define KERNEL_TASK_H
 
 #include <def/int.h>
+#include <mm/vmm.h>
+#include <mm/mem.h>
 
 typedef struct
 {
@@ -25,9 +27,13 @@ typedef struct
 
 typedef struct task
 {
+	u32 pid;
+	bool active;
 	context_t context;
+	page_directory_t *dir;
+	u8 *stack;
+	heap_t *heap;
 	struct task *next;
-	struct task *prev;
 } task_t;
 
 void task_init(void);

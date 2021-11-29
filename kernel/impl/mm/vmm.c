@@ -19,7 +19,6 @@ extern page_directory_t kernel_page_dir;
 extern const void kernel_end;
 
 static page_directory_t *current_dir = NULL;
-static page_directory_t *kernel_dir;
 
 static inline page_table_entry_t *pte_from_virt_addr(page_table_t *table, void *addr)
 {
@@ -187,10 +186,10 @@ void *vmm_create_directory(void)
 	dir->entries[1023].page_table_addr = STRIP_12_LSB((u32) paddr);
 	
 	for (u32 i = PAGE_DIR_INDEX(KERNEL_VIRT_BASE); i < 1023; i++) {
-		if (kernel_dir->entries[i].present) {
+		if (kdir->entries[i].present) {
 			dir->entries[i].present = true;
 			dir->entries[i].writable = true;
-			dir->entries[i].page_table_addr = kernel_dir->entries[i].page_table_addr;
+			dir->entries[i].page_table_addr = kdir->entries[i].page_table_addr;
 		}
 	}
 	
@@ -205,7 +204,7 @@ void vmm_print_kernel_dir(void)
 			dbgprintf("\n%x(%d): ", i * 1024 * 4096, i);
 		}
 		
-		dbgprintf("%d ", kernel_dir->entries[i].present);
+		dbgprintf("%d ", kdir->entries[i].present);
 	}
 	
 	dbgprintf("\n0x100000000\n");
@@ -229,9 +228,9 @@ void vmm_print_table_kernel_dir(unsigned int num)
 
 bool vmm_init(void)
 {
-	kernel_dir = &kernel_page_dir;
+	kdir = &kernel_page_dir;
 	
-	current_dir = kernel_dir;
+	current_dir = kdir;
 	
 	return true;
 }

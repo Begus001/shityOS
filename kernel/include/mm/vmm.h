@@ -49,6 +49,8 @@ typedef struct
 	page_directory_entry_t entries[PAGE_DIR_MAX];
 } page_directory_t;
 
+page_directory_t *kdir;
+
 bool vmm_map_page_current(void *paddr, void *vaddr, bool user);
 bool vmm_map_page(page_directory_t *dir, void *paddr, void *vaddr, bool user);
 void vmm_activate_paging(void);
