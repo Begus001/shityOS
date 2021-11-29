@@ -116,7 +116,7 @@ void intr_init(void)
 {
 	pic_init();
 	pit_init();
-	pit_load_hz(2000);
+	pit_load_hz(20);
 	
 	populate();
 	idt_load();

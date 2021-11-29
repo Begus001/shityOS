@@ -29,4 +29,5 @@ void intr_exc_com_handle(context_t *cntxt)
 
 void intr_clock_handle(void)
 {
+	kprintf("0 ");
 }

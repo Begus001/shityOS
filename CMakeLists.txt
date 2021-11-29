@@ -34,13 +34,14 @@ add_executable(${KERNEL_ELF}
 		kernel/impl/intr/idt.c
 		kernel/impl/intr/pic.c
 		kernel/impl/intr/handler.c
-		kernel/impl/intr/intr_stub.asm
+		kernel/impl/intr/exceptions.asm
 		kernel/impl/mm/pmm.c
 		kernel/impl/mm/vmm.c
 		kernel/impl/mm/heap.c
 		kernel/impl/io/keyboard.c
 		kernel/impl/task/task.c
 		kernel/impl/task/task.asm
+		kernel/impl/intr/intr.asm
 		kernel/include/def/err.h
 		)
 

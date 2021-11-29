@@ -32,6 +32,4 @@ _Noreturn void init(multiboot_info_t *mb_info)
 	task_init();
 	
 	err_unreachable();
-	
-	while (1);
 }
