@@ -4,8 +4,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <def/int.h>
-
-extern const void kernel_end;
+#include <def/kernel.h>
 
 typedef struct heap_index_item heap_index_item_t;
 

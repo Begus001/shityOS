@@ -9,7 +9,6 @@
 static u32 pid_counter = 0;
 static task_t *root_task = NULL;
 
-extern void kernel_stack_top;
 extern void asm_load_kernel_task(context_t *);
 
 _Noreturn static void kernel_task_entry(void)
@@ -46,5 +45,5 @@ void task_init(void)
 
 context_t *task_switch(void)
 {
-
+	return NULL;
 }

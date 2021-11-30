@@ -12,9 +12,6 @@
 #include <task/task.h>
 #include <def/assert.h>
 
-extern const void kernel_end;
-extern const void kernel_start;
-
 _Noreturn void init(multiboot_info_t *mb_info)
 {
 	tty_init();

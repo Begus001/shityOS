@@ -2,10 +2,10 @@
 #include <io/serial.h>
 #include <tty/tty.h>
 #include <mm/mem.h>
+#include <def/assert.h>
 #include <def/kernel.h>
 
 #include <mm/pmm.h>
-#include <def/assert.h>
 
 #define BLOCK_SIZE 4096
 #define BITS       32
@@ -14,8 +14,6 @@
 static u32 bitmap[BITMAP_MAX];
 static u32 blocks_used = BITMAP_MAX * BITS;
 
-extern const void kernel_start;
-extern const void kernel_end;
 extern u32 kernel_page_table_zero;
 
 static inline bool test_bit(size_t bit)

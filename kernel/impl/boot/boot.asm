@@ -107,6 +107,7 @@ _start:
 
 section .bss
 global kernel_stack_top
+global kernel_stack_bottom
 kernel_stack_bottom:
 	resb 0x4000  ; 16 KiB
 kernel_stack_top:

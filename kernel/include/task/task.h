@@ -15,9 +15,6 @@ typedef struct
 	u32 edi;
 	u32 ebp;
 	
-	u32 intr;
-	u32 err;
-	
 	u32 eip;
 	u32 cs;
 	u32 eflags;
