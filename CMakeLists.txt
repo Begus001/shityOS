@@ -42,7 +42,7 @@ add_executable(${KERNEL_ELF}
 		kernel/impl/task/task.c
 		kernel/impl/task/task.asm
 		kernel/impl/intr/intr.asm
-		kernel/include/def/err.h
+		kernel/include/def/assert.h
 		)
 
 target_compile_options(${KERNEL_ELF} PRIVATE

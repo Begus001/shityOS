@@ -10,7 +10,7 @@
 #include <boot/multiboot.h>
 #include <io/keyboard.h>
 #include <task/task.h>
-#include <def/err.h>
+#include <def/assert.h>
 
 extern const void kernel_end;
 extern const void kernel_start;
@@ -31,5 +31,5 @@ _Noreturn void init(multiboot_info_t *mb_info)
 	
 	task_init();
 	
-	err_unreachable();
+	kassert(false, "Unreachable end of init reached");
 }

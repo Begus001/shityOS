@@ -24,7 +24,8 @@ void intr_exc_com_handle(context_t *cntxt)
 	dbgprintf("\nSystem halted\n");
 	
 	intr_disable();
-	__asm__ volatile("hlt");
+	asm volatile("hlt;"
+	             "jmp $;"::);
 }
 
 void intr_clock_handle(void)

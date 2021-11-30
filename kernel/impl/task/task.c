@@ -2,7 +2,7 @@
 #include <io/serial.h>
 #include <tty/tty.h>
 #include <intr/intr.h>
-#include <def/err.h>
+#include <def/assert.h>
 
 #include "task/task.h"
 
@@ -41,7 +41,7 @@ void task_init(void)
 	
 	asm_load_kernel_task(&root_task->context);
 	
-	err_unreachable();
+	kassert(false, "Unreachable end of task_init reached");
 }
 
 context_t *task_switch(void)

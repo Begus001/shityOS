@@ -109,7 +109,7 @@ static void populate(void)
 
 static void idt_load(void)
 {
-	__asm__ volatile("lidt %0" : : "m"(p_idt));
+	asm volatile("lidt %0" : : "m"(p_idt));
 }
 
 void intr_init(void)
@@ -124,10 +124,10 @@ void intr_init(void)
 
 void intr_enable(void)
 {
-	__asm__ volatile("sti");
+	asm volatile("sti");
 }
 
 void intr_disable(void)
 {
-	__asm__ volatile("cli");
+	asm volatile("cli");
 }

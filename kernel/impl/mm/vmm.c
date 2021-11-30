@@ -1,7 +1,7 @@
 #include <mm/mem.h>
 #include <mm/pmm.h>
 #include <io/serial.h>
-#include <def/err.h>
+#include <def/assert.h>
 #include <def/kernel.h>
 
 #include <mm/vmm.h>

@@ -60,8 +60,8 @@ set_entry(u8 i, u32 base, u32 limit, u8 type, bool not_tss, u8 ring, bool presen
 
 static void gdt_load()
 {
-	__asm__ volatile("lgdt %0" : : "m"(p_gdt));
-	__asm__ volatile(
+	asm volatile("lgdt %0" : : "m"(p_gdt));
+	asm volatile(
 	"mov ax, 0x10;"
 	"mov ds, ax;"
 	"mov es, ax;"

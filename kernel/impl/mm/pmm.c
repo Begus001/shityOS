@@ -5,6 +5,7 @@
 #include <def/kernel.h>
 
 #include <mm/pmm.h>
+#include <def/assert.h>
 
 #define BLOCK_SIZE 4096
 #define BITS       32
@@ -52,10 +53,7 @@ void pmm_init(void *info_struct)
 	
 	multiboot_info_t *mb_info = (multiboot_info_t *) info_struct;
 	
-	if (!(mb_info->flags & (1 << 6))) {
-		dbgprintf("PMM: No memory map information was given by the bootloader");
-		__asm__ volatile("cli;hlt");
-	}
+	kassert(mb_info->flags & (1 << 6), "No memory map info given by the bootloader");
 	
 	multiboot_mmap_t *mb_mmap = (multiboot_mmap_t *) (mb_info->mmap_addr + KERNEL_VIRT_BASE);
 	multiboot_mmap_t *mb_mmap_end = (void *) ((uptr) mb_mmap + mb_info->mmap_length);
