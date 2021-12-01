@@ -5,7 +5,7 @@
 
 #include <intr/intr.h>
 
-void intr_exc_com_handle(err_context_t *cntxt)
+void intr_exc_com_handle(exc_context_t *cntxt)
 {
 	tty_set_color(COLOR_BLACK, COLOR_RED);
 	
@@ -26,9 +26,4 @@ void intr_exc_com_handle(err_context_t *cntxt)
 	intr_disable();
 	asm volatile("hlt;"
 	             "jmp $;"::);
-}
-
-context_t *intr_clock_handle(context_t *cntxt)
-{
-	kprintf("clock\n");
 }
