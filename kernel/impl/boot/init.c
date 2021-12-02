@@ -5,7 +5,7 @@
 #include <mm/heap.h>
 #include <tty/tty.h>
 #include <io/serial.h>
-#include <intr/gdt.h>
+#include <mm/gdt.h>
 #include <intr/intr.h>
 #include <boot/multiboot.h>
 #include <io/keyboard.h>

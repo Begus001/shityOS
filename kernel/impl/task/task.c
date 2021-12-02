@@ -5,7 +5,7 @@
 #include <def/assert.h>
 #include <io/keyboard.h>
 #include <mm/mem.h>
-#include <intr/gdt.h>
+#include <mm/gdt.h>
 
 #include "task/task.h"
 

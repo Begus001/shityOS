@@ -29,7 +29,7 @@ add_executable(${KERNEL_ELF}
 		kernel/impl/mm/string.c
 		kernel/impl/boot/boot.asm
 		kernel/impl/io/serial.c
-		kernel/impl/intr/gdt.c
+		kernel/impl/mm/gdt.c
 		kernel/impl/tty/tty.c
 		kernel/impl/intr/idt.c
 		kernel/impl/intr/pic.c

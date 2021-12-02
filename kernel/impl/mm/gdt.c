@@ -2,7 +2,7 @@
 #include <io/serial.h>
 #include <stdbool.h>
 
-#include "intr/gdt.h"
+#include "mm/gdt.h"
 
 #define GDT_TYPE_READ_WRITE 0x02     //  code segment: read, data segment: write
 #define GDT_TYPE_DIRECTION  0x04      /*  code segment: 1: can be executed by lower dpl, 0: can only

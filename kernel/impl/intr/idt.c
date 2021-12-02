@@ -3,7 +3,7 @@
 #include "intr/pic.h"
 #include <tty/tty.h>
 #include <io/serial.h>
-#include <intr/gdt.h>
+#include <mm/gdt.h>
 #include "task/task.h"
 #include "intr/pit.h"
 
