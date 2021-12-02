@@ -40,7 +40,6 @@ add_executable(${KERNEL_ELF}
 		kernel/impl/mm/heap.c
 		kernel/impl/io/keyboard.c
 		kernel/impl/task/task.c
-		kernel/impl/task/task.asm
 		kernel/impl/intr/intr.asm
 		kernel/include/def/assert.h
 		)

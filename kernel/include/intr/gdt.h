@@ -10,6 +10,7 @@
 #define GDT_RING0_DATA 0x10
 #define GDT_RING3_CODE 0x18
 #define GDT_RING3_DATA 0x20
+#define GDT_TSS 0x24
 
 void gdt_init(void);
 
