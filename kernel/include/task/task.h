@@ -6,6 +6,8 @@
 #include <mm/vmm.h>
 #include <mm/mem.h>
 
+#define IDLE_TASK_ADDR 0xBFFFF000
+
 typedef struct
 {
 	u32 eax;

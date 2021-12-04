@@ -17,22 +17,17 @@ task_t *task_new(void *entry)
 
 }
 
-_Noreturn static void idle_task(void)
-{
-	while(1);
-}
-
 void task_init(void)
 {
 	root_task = kmalloc(sizeof(task_t));
 	memset(root_task, 0, sizeof(task_t));
 	root_task->pid = pid_counter++;
 	root_task->dir = kdir;
-	vmm_alloc_at((void *) 0x100000, true);
-	void *esp = vmm_alloc_size_at((void *) 0x101000, true, 0x4000) + 0x4000;
-	memcpy((void *) 0x100000, idle_task, 0x1000);
+	vmm_alloc_at((void *) IDLE_TASK_ADDR, true);
+	memset((void *) IDLE_TASK_ADDR, (char) 0xEB, 1);
+	memset((void *) IDLE_TASK_ADDR + 1, (char) 0xFE, 1);
 	context_t context = {.cs = GDT_RING3_CODE | 3, .ss = GDT_RING3_DATA | 3, .eflags = 0x202, .eip =
-	0x100000, .esp = (u32) esp};
+	IDLE_TASK_ADDR, .esp = (u32) IDLE_TASK_ADDR + 0x1000};
 	root_task->context = &context;
 	root_task->dir = kdir_phys;
 	root_task->next = NULL;

@@ -1,4 +1,6 @@
 #!/bin/bash
 cd "$(dirname "$0")"
-/usr/bin/qemu-system-i386 -kernel ../build/kernel.elf -serial stdio
+./build.sh
+printf "\n\n"
+/usr/bin/qemu-system-i386 -drive file=../build/kernel.iso,format=raw -serial stdio
 

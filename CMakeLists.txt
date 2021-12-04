@@ -25,22 +25,22 @@ set(KERNEL_C_FLAGS -ffreestanding -O0 -Wall -Wextra -nostdlib -masm=intel -std=g
 set(KERNEL_LD_FLAGS -T${KERNEL_LINKER} -ffreestanding -O0 -nostdlib -lgcc -ggdb)
 
 add_executable(${KERNEL_ELF}
-		kernel/impl/boot/init.c
-		kernel/impl/mm/string.c
-		kernel/impl/boot/boot.asm
-		kernel/impl/io/serial.c
-		kernel/impl/mm/gdt.c
-		kernel/impl/tty/tty.c
-		kernel/impl/intr/idt.c
-		kernel/impl/intr/pic.c
-		kernel/impl/intr/handler.c
-		kernel/impl/intr/exceptions.asm
-		kernel/impl/mm/pmm.c
-		kernel/impl/mm/vmm.c
-		kernel/impl/mm/heap.c
-		kernel/impl/io/keyboard.c
-		kernel/impl/task/task.c
-		kernel/impl/intr/intr.asm
+		kernel/src/boot/init.c
+		kernel/src/mm/string.c
+		kernel/src/boot/boot.asm
+		kernel/src/io/serial.c
+		kernel/src/mm/gdt.c
+		kernel/src/tty/tty.c
+		kernel/src/intr/idt.c
+		kernel/src/intr/pic.c
+		kernel/src/intr/handler.c
+		kernel/src/intr/exceptions.asm
+		kernel/src/mm/pmm.c
+		kernel/src/mm/vmm.c
+		kernel/src/mm/heap.c
+		kernel/src/io/keyboard.c
+		kernel/src/task/task.c
+		kernel/src/intr/intr.asm
 		kernel/include/def/assert.h
 		)
 
@@ -54,4 +54,11 @@ target_link_options(${KERNEL_ELF} PRIVATE
 
 target_include_directories(${KERNEL_ELF} PRIVATE
 		kernel/include
+		)
+
+add_custom_command(TARGET ${KERNEL_ELF} POST_BUILD
+		COMMAND mkdir -p sysroot/boot/grub
+		COMMAND cp ${CMAKE_SOURCE_DIR}/grub.cfg sysroot/boot/grub
+		COMMAND cp ${KERNEL_ELF} sysroot/boot
+		COMMAND grub-mkrescue -o kernel.iso sysroot
 		)

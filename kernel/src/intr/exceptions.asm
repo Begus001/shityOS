@@ -50,6 +50,8 @@ exc_com_handler:
 	mov ax, 0x10  ; Switch to kernel data segment
 	mov ds, ax
 	mov es, ax
+	mov fs, ax
+	mov gs, ax
 
 	push esp
 	call intr_exc_com_handle
