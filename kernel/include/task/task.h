@@ -46,14 +46,13 @@ typedef struct
 typedef struct task
 {
 	u32 pid;
-	bool user;
-	context_t context;
-	u8 *stack;
+	context_t *context;
+	page_directory_t *dir;
 	struct task *next;
 } task_t;
 
-void task_init(void);
+task_t *task_current;
 
-task_t *task_switch(void);
+void task_init(void);
 
 #endif

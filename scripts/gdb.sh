@@ -1,5 +1,5 @@
 #!/bin/bash
-
+cd "$(dirname "$0")"
 ./clean.sh
 ./build.sh
 ./debug.sh

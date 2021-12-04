@@ -226,11 +226,21 @@ void vmm_print_table_kernel_dir(unsigned int num)
 	dbgprintf("\n%x\n", num * 1024 * 4096 + (1024 * 4096));
 }
 
+static void *get_kdir_phys(void)
+{
+	page_table_t *table = pt_from_virt_addr_recursive(kdir);
+	return (void *) (ADD_12_LSB(table->entries[PAGE_TABLE_INDEX((u32) kdir)].page_addr));
+}
+
 bool vmm_init(void)
 {
 	kdir = &kernel_page_dir;
 	
 	current_dir = kdir;
+	
+	kdir_phys = get_kdir_phys();
+	
+	dbgprintf("VMM: kdir_phys %x\n", kdir_phys);
 	
 	return true;
 }

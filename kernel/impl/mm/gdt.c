@@ -11,8 +11,11 @@
 										downwards */
 #define GDT_TYPE_IS_CODE_SEGMENT    0x08     // 1: code segment, 0: data segment
 #define GDT_TYPE_IS_DATA_SEGMENT    0x00
+#define GDT_TYPE_TSS                0x09
 
-#define GDT_MAX 5
+#define GDT_MAX 6
+
+extern void kernel_stack_bottom;
 
 struct gdt_entry
 {
@@ -32,6 +35,8 @@ struct gdt_entry
 } __attribute__((packed));
 
 struct gdt_entry gdt[GDT_MAX];
+
+u32 tss[32] = {0, (u32)&kernel_stack_bottom, GDT_RING0_DATA};
 
 struct gdt_pointer
 {
@@ -71,6 +76,8 @@ static void gdt_load()
 	"jmp 0x8:flush;"
 	"flush:"
 	);
+	asm volatile("mov ax, 0x28;"
+				 "ltr ax;");
 }
 
 void gdt_init()
@@ -84,6 +91,8 @@ void gdt_init()
 	          true, false, true, true);
 	set_entry(4, 0, 0xFFFFF, GDT_TYPE_READ_WRITE | GDT_TYPE_IS_DATA_SEGMENT, true, RING3, true,
 	          true, false, true, true);
+	set_entry(5, (u32) tss, sizeof(tss), GDT_TYPE_TSS, false, RING3, true, true, false, true,
+	          false);
 	
 	gdt_load();
 }

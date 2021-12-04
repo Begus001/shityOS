@@ -4,6 +4,7 @@
 #include <io/keyboard.h>
 
 #include <intr/intr.h>
+#include <def/assert.h>
 
 void intr_exc_com_handle(exc_context_t *cntxt)
 {
@@ -26,4 +27,20 @@ void intr_exc_com_handle(exc_context_t *cntxt)
 	intr_disable();
 	asm volatile("hlt;"
 	             "jmp $;"::);
+}
+
+void intr_syscall(u32 eax, u32 ebx)
+{
+	switch (eax) {
+		case 0:
+			kprintf("%s", ebx);
+			break;
+			
+		default:
+			tty_set_color_tmp(COLOR_LIGHT_MAGENTA, COLOR_BLACK);
+			kprintf("Invalid syscall called by %d\n", task_current->pid);
+			dbgprintf("Invalid syscall called by %d\n", task_current->pid);
+			tty_reset_color();
+			break;
+	}
 }

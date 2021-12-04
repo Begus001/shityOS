@@ -41,6 +41,7 @@ extern void exc_com_0x1E(void);
 
 extern void clock_handler(void);
 extern void keyboard_handler(void);
+extern void system_call(void);
 
 struct idt_entry
 {
@@ -105,6 +106,8 @@ static void populate(void)
 	
 	set_entry(0x20, clock_handler, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
 	set_entry(0x21, keyboard_handler, GDT_RING0_CODE, IDT_INTR_GATE, false, RING0, true);
+	
+	set_entry(0x80, system_call, GDT_RING0_CODE, IDT_INTR_GATE, false, RING3, true);
 }
 
 static void idt_load(void)

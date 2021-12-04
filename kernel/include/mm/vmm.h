@@ -50,6 +50,7 @@ typedef struct
 } page_directory_t;
 
 page_directory_t *kdir;
+void *kdir_phys;
 
 bool vmm_map_page_current(void *paddr, void *vaddr, bool user);
 bool vmm_map_page(page_directory_t *dir, void *paddr, void *vaddr, bool user);
