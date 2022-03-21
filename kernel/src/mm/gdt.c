@@ -44,6 +44,11 @@ struct gdt_pointer
 	void *offset;
 } __attribute__((packed)) p_gdt = {.size = GDT_MAX * sizeof(struct gdt_entry) - 1, .offset = gdt,};
 
+u32 *gdt_get_tss(void)
+{
+	return tss;
+}
+
 static void
 set_entry(u8 i, u32 base, u32 limit, u8 type, bool not_tss, u8 ring, bool present, bool available,
           bool long_mode, bool protected_mode, bool granularity_4K)
@@ -63,6 +68,12 @@ set_entry(u8 i, u32 base, u32 limit, u8 type, bool not_tss, u8 ring, bool presen
 	gdt[i].base_hi2 = (base >> 24) & 0xFF;
 }
 
+void gdt_load_tss(void)
+{
+	asm volatile("mov ax, 0x28;"
+	             "ltr ax;");
+}
+
 static void gdt_load()
 {
 	asm volatile("lgdt %0" : : "m"(p_gdt));
@@ -76,8 +87,8 @@ static void gdt_load()
 	"jmp 0x8:flush;"
 	"flush:"
 	);
-	asm volatile("mov ax, 0x28;"
-				 "ltr ax;");
+	
+	gdt_load_tss();
 }
 
 void gdt_init()

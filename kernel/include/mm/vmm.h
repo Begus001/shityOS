@@ -53,15 +53,16 @@ page_directory_t *kdir;
 void *kdir_phys;
 
 bool vmm_map_page_current(void *paddr, void *vaddr, bool user);
-bool vmm_map_page(page_directory_t *dir, void *paddr, void *vaddr, bool user);
+bool vmm_map_page(void *dir_phys, void *paddr, void *vaddr, bool user);
 void vmm_activate_paging(void);
+bool vmm_alloc_at_dir(void *dir_phys, void *vaddr, bool user);
 void *vmm_alloc_at_ret_phys(void *vaddr, bool user);
 void *vmm_alloc_size_at_ret_phys(void *vaddr, bool user, size_t size);
 void *vmm_alloc_at(void *vaddr, bool user);
 void *vmm_alloc_size_at(void *vaddr, bool user, size_t size);
 bool vmm_free(void *addr);
 void *vmm_create_directory(void);
-bool vmm_change_directory(page_directory_t *dir);
+bool vmm_change_directory(void *dir);
 
 void vmm_print_kernel_dir(void);
 void vmm_print_table_kernel_dir(unsigned int num);

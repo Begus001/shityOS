@@ -28,5 +28,9 @@ _Noreturn void init(multiboot_info_t *mb_info)
 	
 	task_init();
 	
+	task_new((void *) 0x100000);
+	
+	intr_enable();
+	
 	kassert(false, "Unreachable code reached at end of init");
 }

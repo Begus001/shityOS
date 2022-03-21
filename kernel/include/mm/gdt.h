@@ -12,6 +12,7 @@
 #define GDT_RING3_DATA 0x20
 #define GDT_TSS 0x24
 
+u32 *gdt_get_tss(void);
 void gdt_init(void);
 
 #endif

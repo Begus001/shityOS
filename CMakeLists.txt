@@ -21,7 +21,8 @@ set(KERNEL_ELF kernel.elf)
 
 set(KERNEL_LINKER "${CMAKE_SOURCE_DIR}/kernel/kernel.ld")
 
-set(KERNEL_C_FLAGS -ffreestanding -O0 -Wall -Wextra -nostdlib -masm=intel -std=gnu11 -ggdb)
+set(KERNEL_C_FLAGS -ffreestanding -O0 -Wall -Wextra -nostdlib -masm=intel -std=gnu11 -pedantic
+		-ggdb)
 set(KERNEL_LD_FLAGS -T${KERNEL_LINKER} -ffreestanding -O0 -nostdlib -lgcc -ggdb)
 
 add_executable(${KERNEL_ELF}

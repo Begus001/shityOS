@@ -19,6 +19,7 @@ extern page_directory_t kernel_page_dir;
 extern const void kernel_end;
 
 static page_directory_t *current_dir = NULL;
+static void *current_dir_phys = NULL;
 
 static inline page_table_entry_t *pte_from_virt_addr(page_table_t *table, void *addr)
 {
@@ -56,15 +57,10 @@ static inline page_table_t *create_table(void)
 
 bool vmm_map_page_current(void *paddr, void *vaddr, bool user)
 {
-	return vmm_map_page(current_dir, paddr, vaddr, user);
-}
-
-bool vmm_map_page(page_directory_t *dir, void *paddr, void *vaddr, bool user)
-{
-	if (!dir)
+	if ((u32) paddr % 0x1000 || (u32) vaddr % 0x1000)
 		return false;
 	
-	page_directory_entry_t *dir_entry = pde_from_virt_addr(dir, vaddr);
+	page_directory_entry_t *dir_entry = pde_from_virt_addr(current_dir, vaddr);
 	
 	if (!dir_entry)
 		return false;
@@ -93,11 +89,32 @@ bool vmm_map_page(page_directory_t *dir, void *paddr, void *vaddr, bool user)
 	return true;
 }
 
-bool vmm_change_directory(page_directory_t *dir)
+bool vmm_map_page(void *dir_phys, void *paddr, void *vaddr, bool user)
+{
+	if (!dir_phys || (u32) paddr % 0x1000 || (u32) vaddr % 0x1000)
+		return false;
+	
+	void *last_dir = NULL;
+	
+	if (current_dir_phys != dir_phys) {
+		last_dir = current_dir_phys;
+		vmm_change_directory(dir_phys);
+	}
+	
+	if (!vmm_map_page_current(paddr, vaddr, user))
+		return false;
+	
+	if (last_dir)
+		vmm_change_directory(last_dir);
+	
+	return true;
+}
+
+bool vmm_change_directory(void *dir)
 {
 	if (!dir)
 		return false;
-	current_dir = dir;
+	current_dir_phys = dir;
 	__asm__ volatile("mov cr3, %0"::"r"(dir));
 	return true;
 }
@@ -109,6 +126,11 @@ void vmm_activate_paging(void)
 	"or eax, 0x80000000;"
 	"mov cr0, eax;"
 	:);
+}
+
+bool vmm_alloc_at_dir(void *dir_phys, void *vaddr, bool user)
+{
+	return vmm_map_page(dir_phys, pmm_alloc_block(), vaddr, user);
 }
 
 void *vmm_alloc_at_ret_phys(void *vaddr, bool user)
@@ -236,9 +258,10 @@ bool vmm_init(void)
 {
 	kdir = &kernel_page_dir;
 	
-	current_dir = kdir;
-	
 	kdir_phys = get_kdir_phys();
+	
+	current_dir = (void *) 0xFFFFF000;
+	current_dir_phys = kdir_phys;
 	
 	dbgprintf("VMM: kdir_phys %x\n", kdir_phys);
 	

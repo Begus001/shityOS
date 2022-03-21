@@ -7,6 +7,7 @@
 #include <mm/mem.h>
 
 #define IDLE_TASK_ADDR 0xBFFFF000
+#define KERNEL_STACK_SIZE 0x100
 
 typedef struct
 {
@@ -47,14 +48,16 @@ typedef struct
 
 typedef struct task
 {
+	u8 *kernel_stack;
 	u32 pid;
 	context_t *context;
-	page_directory_t *dir;
+	void *dir;
 	struct task *next;
 } task_t;
 
 task_t *task_current;
 
+task_t *task_new(void *entry_phys);
 void task_init(void);
 
 #endif
