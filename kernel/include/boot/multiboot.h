@@ -79,4 +79,12 @@ typedef struct
 	u32 type;
 } multiboot_mmap_t;
 
+typedef struct
+{
+	u32 mod_start;
+	u32 mod_end;
+	char *string;
+	u32 reserved;
+} multiboot_mod_t;
+
 #endif

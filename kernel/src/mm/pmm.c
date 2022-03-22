@@ -23,7 +23,7 @@ static inline bool test_bit(size_t bit)
 
 static inline void mark_free(void *addr)
 {
-	uptr index = (uptr) addr / BLOCK_SIZE;
+	uptr index = (uptr)addr / BLOCK_SIZE;
 	if (!(bitmap[index / BITS] & (1 << index % BITS)))
 		return;
 	bitmap[index / BITS] &= ~(1 << (index % BITS));
@@ -32,7 +32,7 @@ static inline void mark_free(void *addr)
 
 static inline void mark_used(void *addr)
 {
-	uptr index = (uptr) addr / BLOCK_SIZE;
+	uptr index = (uptr)addr / BLOCK_SIZE;
 	if (bitmap[index / BITS] & (1 << index % BITS))
 		return;
 	bitmap[index / BITS] |= (1 << (index % BITS));
@@ -41,45 +41,69 @@ static inline void mark_used(void *addr)
 
 void pmm_test(void *addr)
 {
-	uptr index = (uptr) addr / BLOCK_SIZE;
-	dbgprintf("PMM: test %x: %d\n", (u32) addr, (bitmap[index / BITS] >> (index % BITS)) & 1);
+	uptr index = (uptr)addr / BLOCK_SIZE;
+	dbgprintf("PMM: test %x: %d\n", (u32)addr, (bitmap[index / BITS] >> (index % BITS)) & 1);
+}
+
+static void mark_mb_info_used(void *info_struct)
+{
+	for (u32 addr = (u32)info_struct; addr < (u32)info_struct + sizeof(multiboot_info_t); addr +=
+		BLOCK_SIZE) {
+		mark_used((void *)(addr - KERNEL_VIRT_BASE));
+	}
+}
+
+static void mark_mb_mods_used(void *info_struct)
+{
+	multiboot_info_t *mb_info = (multiboot_info_t *)info_struct;
+	u32 count = mb_info->mods_count;
+	multiboot_mod_t *mods = (multiboot_mod_t *)(mb_info->mods_addr + KERNEL_VIRT_BASE);
+	
+	for (u32 i = 0; i < count; i++) {
+		for (u32 j = mods[i].mod_start; j < mods[i].mod_end; j += BLOCK_SIZE) {
+			mark_used((void *)(j - KERNEL_VIRT_BASE));
+		}
+	}
 }
 
 void pmm_init(void *info_struct)
 {
-	memset(bitmap, (char) 0xFF, sizeof(u32) * BITMAP_MAX);  // Mark all used
+	memset(bitmap, (char)0xFF, sizeof(u32) * BITMAP_MAX);  // Mark all used
 	
-	multiboot_info_t *mb_info = (multiboot_info_t *) info_struct;
+	multiboot_info_t *mb_info = (multiboot_info_t *)info_struct;
 	
 	kassert(mb_info->flags & (1 << 6), "No memory map info given by the bootloader");
 	
-	multiboot_mmap_t *mb_mmap = (multiboot_mmap_t *) (mb_info->mmap_addr + KERNEL_VIRT_BASE);
-	multiboot_mmap_t *mb_mmap_end = (void *) ((uptr) mb_mmap + mb_info->mmap_length);
+	multiboot_mmap_t *mb_mmap = (multiboot_mmap_t *)(mb_info->mmap_addr + KERNEL_VIRT_BASE);
+	multiboot_mmap_t *mb_mmap_end = (void *)((uptr)mb_mmap + mb_info->mmap_length);
 	
 	while (mb_mmap < mb_mmap_end) {
 		if (mb_mmap->type == 1) {  // Mark memory free
-			uptr addr = (uptr) mb_mmap->base_addr;
-			uptr end_addr = (uptr) addr + mb_mmap->length;
+			uptr addr = (uptr)mb_mmap->base_addr;
+			uptr end_addr = (uptr)addr + mb_mmap->length;
 			
 			while (addr < end_addr) {
-				mark_free((void *) addr);
+				mark_free((void *)addr);
 				addr += BLOCK_SIZE;
 			}
 		}
 		mb_mmap++;
 	}
 	
-	uptr addr = (uptr) &kernel_start - KERNEL_VIRT_BASE;
-	uptr end_addr = (uptr) &kernel_end - KERNEL_VIRT_BASE;
-	dbgprintf("PMM: Kernel size: %x (%d)\n", (u32) &kernel_end - (u32) &kernel_start,
-	          (u32) &kernel_end - (u32) &kernel_start);
+	mark_mb_info_used(info_struct);
+	mark_mb_mods_used(info_struct);
+	
+	uptr addr = (uptr)&kernel_start - KERNEL_VIRT_BASE;
+	uptr end_addr = (uptr)&kernel_end - KERNEL_VIRT_BASE;
+	dbgprintf("PMM: Kernel size: %x (%d)\n", (u32)&kernel_end - (u32)&kernel_start,
+	          (u32)&kernel_end - (u32)&kernel_start);
 	while (addr < end_addr) {  // Mark kernel used again
-		mark_used((void *) addr);
+		mark_used((void *)addr);
 		addr += BLOCK_SIZE;
 	}
 
 //	mark_free((void *) &kernel_page_table_zero);
-	mark_used((void *) 0);
+	mark_used((void *)0);
 }
 
 void pmm_memmap(void)
@@ -141,8 +165,8 @@ void *pmm_alloc(size_t size)
 			stretch_end = i - 1;
 			if ((stretch_end - stretch_start + 1) * BLOCK_SIZE >= size) {
 				for (size_t k = 0; k < size / (BLOCK_SIZE + 1) + 1; k++)
-					mark_used((void *) (stretch_start + k));
-				return (void *) (stretch_start * BLOCK_SIZE);
+					mark_used((void *)(stretch_start + k));
+				return (void *)(stretch_start * BLOCK_SIZE);
 			} else {
 				counting = false;
 			}
@@ -162,7 +186,7 @@ void *pmm_alloc_block(void)
 			if (!(bitmap[i] & test)) {
 				bitmap[i] |= test;
 				blocks_used++;
-				return (void *) ((i * 32 + k) * BLOCK_SIZE);
+				return (void *)((i * 32 + k) * BLOCK_SIZE);
 			}
 		}
 	}
@@ -173,7 +197,7 @@ void *pmm_alloc_block(void)
 void pmm_free(void *addr, size_t size)
 {
 	for (size_t i = 0; i < size / (BLOCK_SIZE + 1) + 1; i++)
-		mark_free((void *) (addr + i));
+		mark_free((void *)(addr + i));
 }
 
 void pmm_free_block(void *addr)
